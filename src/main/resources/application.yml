@@ -1,0 +1,33 @@
+spring:
+  profiles:
+    include: oauth
+    active: local
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/comuDB
+    username: comu
+    password:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    open-in-view: true
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        use-new-id-generate-mappings: false
+        show_sql: true
+        format_sql: true
+        use_sql_comments: true
+
+
+  thymeleaf:
+    cache: false
+
+
+
+logging.level:
+  org.hibernate.SQL: debug
+#    org.hibernate.type: trace
+
+
