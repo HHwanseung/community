@@ -6,11 +6,14 @@ import comu.community.config.jwt.JwtSecurityConfig;
 import comu.community.config.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -25,7 +28,13 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    public void filterChain(HttpSecurity http) throws Exception {
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         //CSRF 설정 Disable()
         http.csrf().disable()
 
@@ -58,6 +67,8 @@ public class SecurityConfig {
                 // JwtFilter 를 addFilterBefore 로 등록했던 JwtSecurityConfig 클래스를 적용
                 .and()
                 .apply(new JwtSecurityConfig(tokenProvider));
+
+        return  http.build();
 
 
     }
