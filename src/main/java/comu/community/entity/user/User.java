@@ -22,7 +22,6 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false, unique = true)
     private String username;
 
-
     @JsonIgnore
     @Column(nullable = false)
     private String password;
@@ -37,11 +36,9 @@ public class User extends BaseTimeEntity {
     private Role role;
 
     @Builder
-    public User(String username, String password, String name, String nickname, Role role) {
+    public User(String username, String password, Role role) {
         this.username = username;
         this.password = password;
-        this.name = name;
-        this.nickname = nickname;
         this.role = role;
     }
 
