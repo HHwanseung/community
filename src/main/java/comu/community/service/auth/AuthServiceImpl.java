@@ -38,6 +38,8 @@ public class AuthServiceImpl implements AuthService {
         User user = User.builder()
                 .username(req.getUsername())
                 .password(req.getPassword())
+                .name(req.getName())
+                .nickname(req.getNickname())
                 .role(Role.ROLE_USER)
                 .build();
 
