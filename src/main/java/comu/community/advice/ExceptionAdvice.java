@@ -1,9 +1,6 @@
 package comu.community.advice;
 
-import comu.community.exception.CannotConvertHelperException;
-import comu.community.exception.LoginFailureException;
-import comu.community.exception.MemberNicknameAlreadyExistsException;
-import comu.community.exception.MemberUsernameAlreadyExistsException;
+import comu.community.exception.*;
 import comu.community.response.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -54,11 +51,11 @@ public class ExceptionAdvice {
 
         // 404 응답
         // 요청한 자원을 찾을 수 없음
-//    @ExceptionHandler(MemberNotFoundException.class)
-//    @ResponseStatus(HttpStatus.NOT_FOUND)
-//    public Response memberNotFoundException() {
-//        return Response.failure(404, "요청한 회원을 찾을 수 없습니다.");
-//    }
+    @ExceptionHandler(MemberNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Response memberNotFoundException() {
+        return Response.failure(404, "요청한 회원을 찾을 수 없습니다.");
+    }
 
         // 404 응답
         // 요청한 자원을 찾을 수 없음
@@ -83,4 +80,5 @@ public class ExceptionAdvice {
     public Response memberNicknameAlreadyExistsException (MemberNicknameAlreadyExistsException e){
         return Response.failure(409, e.getMessage() + "은 중복된 닉네임 입니다.");
     }
+
 }

@@ -9,7 +9,7 @@ public enum ExceptionType {
     ACCESS_DENIED_EXCEPTION("accessDeniedException.code", "accessDeniedException.msg"),
     BIND_EXCEPTION("bindException.code", "bindException.msg"),
     LOGIN_FAILURE_EXCEPTION("loginFailureException.code", "loginFailureException.msg"),
-    MEMBER_EMAIL_ALREADY_EXISTS_EXCEPTION("memberEmailAlreadyExistsException.code", "memberEmailAlreadyExistsException.msg"),
+    MEMBER_USERNAME_ALREADY_EXISTS_EXCEPTION("memberUsernameAlreadyExistsException.code", "memberUsernameAlreadyExistsException.msg"),
     MEMBER_NICKNAME_ALREADY_EXISTS_EXCEPTION("memberNicknameAlreadyExistsException.code", "memberNicknameAlreadyExistsException.msg"),
     MEMBER_NOT_FOUND_EXCEPTION("memberNotFoundException.code", "memberNotFoundException.msg"),
     ROLE_NOT_FOUND_EXCEPTION("roleNotFoundException.code", "roleNotFoundException.msg"),
