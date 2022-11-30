@@ -40,7 +40,9 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         //CSRF 설정 Disable()
         http
-                .csrf().disable()
+                .csrf().disable();
+
+        http
 
                 // exception handling 할 때 우리가 만든 클래스를 추가
                 .exceptionHandling()
@@ -59,8 +61,8 @@ public class SecurityConfig {
 
                 .antMatchers("/auth/**").permitAll() //누구나 접근 가능
                 .antMatchers("/swagger-ui/**", "/v3/**").permitAll() // swagger
-                .antMatchers("/test")
-                .access("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
+//                .antMatchers("/test")
+//                .access("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
 
                 .antMatchers("/api/sign-up", "/api/sign-in", "/api/reissue").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/users").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
