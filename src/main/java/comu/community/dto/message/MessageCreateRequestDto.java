@@ -1,5 +1,6 @@
 package comu.community.dto.message;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -9,7 +10,7 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-@ApiOperation(value = "메세지 생성 요청")
+@ApiModel(value = "메세지 생성 요청")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

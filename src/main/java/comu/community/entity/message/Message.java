@@ -1,19 +1,19 @@
 package comu.community.entity.message;
 
+import comu.community.entity.BaseTimeEntity;
 import comu.community.entity.user.User;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
 import javax.persistence.*;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class Message {
+public class Message extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,6 +46,7 @@ public class Message {
         this.content = content;
         this.sender = sender;
         this.receiver = receiver;
+        this.deletedBySender = this.deletedByReceiver = false;
     }
 
     public void deleteBySender() {
