@@ -1,6 +1,9 @@
 package comu.community.contoller.user;
 
 import comu.community.dto.user.UserDto;
+import comu.community.entity.user.User;
+import comu.community.exception.MemberNotFoundException;
+import comu.community.repository.user.UserRepository;
 import io.swagger.annotations.ApiParam;
 import org.springframework.http.HttpStatus;
 import comu.community.response.Response;
@@ -8,6 +11,8 @@ import comu.community.service.user.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @Api(value = "User Controller", tags = "User")
@@ -17,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+    private final UserRepository userRepository;
 
     @ApiOperation(value = "회원 전체 조회", notes = "회원 전체를 조회")
     @ResponseStatus(HttpStatus.OK)
@@ -48,7 +54,5 @@ public class UserController {
         userService.deleteUserInfo(id);
         return Response.success();
     }
-
-
 
 }
