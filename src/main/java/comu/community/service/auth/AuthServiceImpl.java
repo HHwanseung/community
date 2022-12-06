@@ -31,15 +31,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public void signup(SignUpRequestDto req) {
         validateSignUpInfo(req);
-
-        User user = User.builder()
-                .username(req.getUsername())
-                .password(passwordEncoder.encode(req.getPassword()))
-                .name(req.getName())
-                .nickname(req.getNickname())
-                .role(Role.ROLE_USER)
-                .build();
-
+        User user = createSignupFormOfUser(req);
         userRepository.save(user);
 
     }
@@ -107,6 +99,17 @@ public class AuthServiceImpl implements AuthService {
         TokenResponseDto tokenResponseDto = new TokenResponseDto(tokenDto.getAccessToken(), tokenDto.getRefreshToken());
         return tokenResponseDto;
 
+    }
+
+    private User createSignupFormOfUser(SignUpRequestDto req) {
+        User user = User.builder()
+                .username(req.getUsername())
+                .password(passwordEncoder.encode(req.getPassword()))
+                .nickname(req.getNickname())
+                .name(req.getName())
+                .role(Role.ROLE_USER)
+                .build();
+        return user;
     }
 
     private void validateSignUpInfo(SignUpRequestDto signUpRequestDto) {

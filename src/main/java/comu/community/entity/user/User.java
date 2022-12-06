@@ -13,6 +13,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Builder
 public class User extends BaseTimeEntity {
 
     @Id
@@ -36,8 +37,7 @@ public class User extends BaseTimeEntity {
     private Role role;
 
     @Builder
-
-    public User(String username, String password, String name, String nickname, Role role) {
+    public User(String username, String password, Role role) {
         this.username = username;
         this.password = password;
         this.name = name;
