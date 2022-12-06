@@ -5,16 +5,21 @@ import comu.community.config.jwt.JwtAuthenticationEntryPoint;
 import comu.community.config.jwt.JwtSecurityConfig;
 import comu.community.config.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import static comu.community.entity.user.Role.ROLE_USER;
 
@@ -35,6 +40,7 @@ public class SecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
+
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -60,8 +66,8 @@ public class SecurityConfig {
                 .authorizeRequests()
 
                 .antMatchers("/auth/**").permitAll() //누구나 접근 가능
-                .antMatchers("/swagger-ui/**", "/v3/**").permitAll() // swagger
-//                .antMatchers("/test")
+                .antMatchers("/swagger-ui/**", "/swagger-ui.html","/swagger-resources/**","/v3/**", "/test").permitAll() // swagger
+
 //                .access("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
 
                 .antMatchers("/api/sign-up", "/api/sign-in", "/api/reissue").permitAll()
@@ -77,6 +83,15 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.GET,"/api/messages/receiver/{id}").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
                 .antMatchers(HttpMethod.DELETE,"/api/messages/sender/{id}").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
                 .antMatchers(HttpMethod.DELETE,"/api/messages/receiver/{id}").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+
+                .antMatchers(HttpMethod.POST, "/api/boards").authenticated()
+                .antMatchers(HttpMethod.GET, "/api/boards/all/{categoryId}").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+                .antMatchers(HttpMethod.GET, "/api/boards/best").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+                .antMatchers(HttpMethod.GET, "/api/boards/{id}").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+                .antMatchers(HttpMethod.POST, "/api/boards/{id}").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+                .antMatchers(HttpMethod.POST, "/api/boards/{id}/favorites").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+                .antMatchers(HttpMethod.PUT, "/api/boards/{id}").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+                .antMatchers(HttpMethod.DELETE, "/api/boards/{id}").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
 
                 .anyRequest().hasAnyRole("ROLE_ADMIN")
 
