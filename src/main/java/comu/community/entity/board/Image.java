@@ -37,9 +37,9 @@ public class Image extends BaseTimeEntity {
     private final static String supportedExtension[] = {"Jpg", "Jpeg", "gif", "bmp", "png"};
 
     public Image(String originName) {
+        // 세팅
         this.originName = originName;
         this.uniqueName = generateUniqueName(extractExtension(originName));
-
     }
 
     public void initBoard(Board board) {
