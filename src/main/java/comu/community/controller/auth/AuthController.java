@@ -1,4 +1,4 @@
-package comu.community.contoller.auth;
+package comu.community.controller.auth;
 
 import comu.community.dto.sign.LoginRequestDto;
 import comu.community.dto.sign.SignUpRequestDto;
