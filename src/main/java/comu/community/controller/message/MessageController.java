@@ -1,4 +1,4 @@
-package comu.community.contoller.message;
+package comu.community.controller.message;
 
 import comu.community.dto.message.MessageCreateRequestDto;
 import comu.community.entity.user.User;
