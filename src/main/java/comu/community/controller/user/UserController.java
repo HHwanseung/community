@@ -1,4 +1,4 @@
-package comu.community.contoller.user;
+package comu.community.controller.user;
 
 import comu.community.dto.user.UserDto;
 import comu.community.entity.user.User;
@@ -43,16 +43,29 @@ public class UserController {
     @ApiOperation(value = "회원 정보 수정", notes = "회원 정보를 수정")
     @ResponseStatus(HttpStatus.OK)
     @PutMapping("/users/{id}")
-    public Response updateUserInfo(@ApiParam(value = "User ID", required = true) @PathVariable Long id, @RequestBody UserDto userDto) {
-        return Response.success(userService.updateUserInfo(id,userDto));
+    public Response updateUserInfo(@RequestBody UserDto userDto) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepository.findByUsername(authentication.getName()).orElseThrow(MemberNotFoundException::new);
+        return Response.success(userService.updateUserInfo(user, userDto));
     }
 
     @ApiOperation(value = "회원 탈퇴", notes = "회원을 탈퇴 시킴")
     @ResponseStatus(HttpStatus.OK)
-    @DeleteMapping("/users/{id}")
-    public Response deleteUserInfo(@ApiParam(value = "User ID", required = true) @PathVariable Long id) {
-        userService.deleteUserInfo(id);
+    @DeleteMapping("/users")
+    public Response deleteUserInfo() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepository.findByUsername(authentication.getName()).orElseThrow(MemberNotFoundException::new);
+        userService.deleteUserInfo(user);
         return Response.success();
+    }
+
+    @ApiOperation(value = "즐겨찾기 한 글 조회")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/users/favorites")
+    public Response findfavorites() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepository.findByUsername(authentication.getName()).orElseThrow(MemberNotFoundException::new);
+        return Response.success(userService.findFavorites(user));
     }
 
 }

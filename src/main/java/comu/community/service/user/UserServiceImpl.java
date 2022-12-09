@@ -1,10 +1,13 @@
 package comu.community.service.user;
 
+import comu.community.dto.board.BoardSimpleDto;
 import comu.community.dto.user.UserDto;
+import comu.community.entity.board.Favorite;
 import comu.community.entity.user.Role;
 import comu.community.entity.user.User;
 import comu.community.exception.MemberNotEqualsException;
 import comu.community.exception.MemberNotFoundException;
+import comu.community.repository.board.FavoriteRepository;
 import comu.community.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -14,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +25,7 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final FavoriteRepository favoriteRepository;
 
 
     @Override
@@ -39,42 +44,27 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto updateUserInfo(Long id, UserDto updateInfo) {
-        User user = userRepository.findById(id).orElseThrow(() -> {
-            return new MemberNotFoundException();
-        });
+    public User updateUserInfo(User user, UserDto updateInfo) {
+        user.editUser(updateInfo);
+        return user;
 
-        // 권한 처리
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (!authentication.getName().equals(user.getUsername())) {
-            throw new MemberNotEqualsException();
-        } else {
-            user.setNickname(updateInfo.getNickname());
-            user.setName(updateInfo.getName());
-            return UserDto.toDto(user);
-        }
     }
 
     @Override
-    public void deleteUserInfo(Long id) {
+    public void deleteUserInfo(User user) {
 
-        User user = userRepository.findById(id).orElseThrow(MemberNotFoundException::new);
-
-        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        String auth = String.valueOf(authentication.getAuthorities());
-        String authByAdmin = "[" + Role.ROLE_ADMIN + "]";
-
-        if (authentication.getName().equals(user.getUsername()) || auth.equals(authByAdmin)) {
-            userRepository.deleteById(id);
-        } else {
-            throw new MemberNotEqualsException();
-        }
-
+        userRepository.delete(user);
     }
 
-
+    @Override
+    public List<BoardSimpleDto> findFavorites(User user) {
+        List<Favorite> favorites = favoriteRepository.findAllByUser(user);
+        List<BoardSimpleDto> boardSimpleDtoList = new ArrayList<>();
+        favorites.stream()
+                .map(favorite -> boardSimpleDtoList.add(new BoardSimpleDto().toDto(favorite.getBoard())))
+                .collect(Collectors.toList());
+        return boardSimpleDtoList;
+    }
 
 
 }
