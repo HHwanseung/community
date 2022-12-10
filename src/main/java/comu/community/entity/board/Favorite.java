@@ -40,4 +40,9 @@ public class Favorite extends BaseTimeEntity {
         this.user = user;
         this.status = true;
     }
+
+    public void unFavoriteBoard(Board board) {
+        this.status = false;
+        board.setFavorited(board.getFavorited() -1);
+    }
 }
