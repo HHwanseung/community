@@ -1,6 +1,7 @@
 package comu.community.entity.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import comu.community.dto.user.UserDto;
 import comu.community.entity.BaseTimeEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -43,5 +44,10 @@ public class User extends BaseTimeEntity {
         this.name = name;
         this.nickname = nickname;
         this.role = role;
+    }
+
+    public void editUser(UserDto req) {
+        name = req.getName();
+        nickname = req.getNickname();
     }
 }
