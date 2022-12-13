@@ -16,8 +16,8 @@ import java.util.Optional;
 import static java.util.stream.Collectors.toList;
 
 @Data
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
-@NoArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Builder
 public class Board extends BaseTimeEntity {
@@ -27,14 +27,14 @@ public class Board extends BaseTimeEntity {
     private Long id;
 
     @Column(nullable = false)
-    @Lob
     private String title;
 
     @Column(nullable = false)
+    @Lob
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Column(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
@@ -42,10 +42,11 @@ public class Board extends BaseTimeEntity {
     private List<Image> images;
 
     @Column(nullable = true)
-    private int liked;
+    private int liked; // 추천 수
 
     @Column(nullable = true)
-    private int favorited;
+    private int favorited; // 즐겨찾기 수
+
 
     public Board(String title, String content, User user, List<Image> images) {
         this.title = title;
@@ -57,10 +58,10 @@ public class Board extends BaseTimeEntity {
         addImages(images);
     }
 
-    public ImageUpdateResult update(BoardUpdateRequest req) {
+    public ImageUpdatedResult update(BoardUpdateRequest req) {
         this.title = req.getTitle();
         this.content = req.getContent();
-        ImageUpdateResult result = findImageUpdateResult(req.getAddedImages(), req.getDeletedImages());
+        ImageUpdatedResult result = findImageUpdatedResult(req.getAddedImages(), req.getDeletedImages());
         addImages(result.getAddedImages());
         deleteImages(result.getDeletedImages());
         return result;
@@ -74,13 +75,13 @@ public class Board extends BaseTimeEntity {
     }
 
     private void deleteImages(List<Image> deleted) {
-        deleted.stream().forEach(i -> this.images.remove(i));
+        deleted.stream().forEach(di -> this.images.remove(di));
     }
 
-    private ImageUpdateResult findImageUpdateResult(List<MultipartFile> addImageFiles, List<Integer> deletedImageIds) {
+    private ImageUpdatedResult findImageUpdatedResult(List<MultipartFile> addImageFiles, List<Integer> deletedImageIds) {
         List<Image> addedImages = convertImageFilesToImages(addImageFiles);
         List<Image> deletedImages = convertImageIdsToImages(deletedImageIds);
-        return new ImageUpdateResult(addImageFiles, addedImages, deletedImages);
+        return new ImageUpdatedResult(addImageFiles, addedImages, deletedImages);
 
     }
 
@@ -100,9 +101,26 @@ public class Board extends BaseTimeEntity {
         return imageFiles.stream().map(imageFile -> new Image(imageFile.getOriginalFilename())).collect(toList());
     }
 
+    public void increaseLikeCount() {
+        this.liked += 1;
+    }
+
+    public void decreaseLikeCount() {
+        this.liked -= 1;
+    }
+
+    public void increaseFavoritCount() {
+        this.favorited += 1;
+    }
+
+    public void decreaseFavoritCount() {
+        this.favorited -= 1;
+    }
+
+
     @Getter
     @AllArgsConstructor
-    public static class ImageUpdateResult {
+    public static class ImageUpdatedResult {
         private List<MultipartFile> addedImageFiles;
         private List<Image> addedImages;
         private List<Image> deletedImages;

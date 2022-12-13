@@ -18,6 +18,8 @@ public class BoardResponseDto {
     private String writer_nickname;
     private String title;
     private String content;
+    private int likeCount;
+    private int favoriteCount;
     private List<ImageDto> images;
 
     public static BoardResponseDto toDto(Board board, String writer_nickname) {
@@ -26,6 +28,8 @@ public class BoardResponseDto {
                 writer_nickname,
                 board.getTitle(),
                 board.getContent(),
+                board.getLiked(),
+                board.getFavorited(),
                 board.getImages().stream().map(i -> ImageDto.toDto(i)).collect(toList())
         );
     }

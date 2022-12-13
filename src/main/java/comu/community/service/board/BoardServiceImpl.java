@@ -2,11 +2,16 @@ package comu.community.service.board;
 
 import comu.community.dto.board.*;
 import comu.community.entity.board.Board;
+import comu.community.entity.board.Favorite;
 import comu.community.entity.board.Image;
+import comu.community.entity.board.LikeBoard;
 import comu.community.entity.user.User;
 import comu.community.exception.BoardNotFoundException;
+import comu.community.exception.FavoriteNotFoundException;
 import comu.community.exception.MemberNotEqualsException;
 import comu.community.repository.board.BoardRepository;
+import comu.community.repository.board.FavoriteRepository;
+import comu.community.repository.board.LikeBoardRepository;
 import comu.community.repository.user.UserRepository;
 import comu.community.service.file.FileService;
 import lombok.RequiredArgsConstructor;
@@ -19,20 +24,30 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.LongStream;
+
+import static java.util.stream.Collectors.toList;
 
 @RequiredArgsConstructor
 @Service
 public class BoardServiceImpl implements BoardService {
 
+    private final static String SUCCESS_LIKE_BOARD = "좋아요 처리 완료";
+    private final static String SUCCESS_UNLIKE_BOARD = "좋아요 취소 완료";
+    private final static String SUCCESS_FAVORITE_BOARD = "즐겨찾기 처리 완료";
+    private final static String SUCCESS_UNFAVORITE_BOARD = "즐겨찾기 취소 완료";
+
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
     private final FileService fileService;
+    private final LikeBoardRepository likeBoardRepository;
+    private final FavoriteRepository favoriteRepository;
 
 
     @Override
     public BoardCreateResponse createBoard(BoardCreateRequest req, User user) {
 
-        List<Image> images = req.getImages().stream().map(i -> new Image(i.getOriginalFilename())).collect(Collectors.toList());
+        List<Image> images = req.getImages().stream().map(i -> new Image(i.getOriginalFilename())).collect(toList());
         Board board = boardRepository.save(new Board(req.getTitle(), req.getContent(), user, images));
         uploadImages(board.getImages(), req.getImages());
         return new BoardCreateResponse(board.getId(), board.getTitle(), board.getContent());
@@ -40,10 +55,9 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public List<BoardSimpleDto> findAllBoards(Pageable pageable) {
-
         Page<Board> boards = boardRepository.findAll(pageable);
-        List<BoardSimpleDto> boardSimpleDtoList = new ArrayList<>();
-        boards.stream().forEach(i -> boardSimpleDtoList.add(new BoardSimpleDto().toDto(i)));
+        List<BoardSimpleDto> boardSimpleDtoList = boards.stream().map(i -> new BoardSimpleDto().toDto(i))
+                .collect(toList());
         return boardSimpleDtoList;
     }
 
@@ -59,11 +73,10 @@ public class BoardServiceImpl implements BoardService {
     public BoardResponseDto updateBoard(Long id, BoardUpdateRequest req, User user) {
         Board board = boardRepository.findById(id).orElseThrow(BoardNotFoundException::new);
         validateBoardOwner(user, board);
-
-        Board.ImageUpdateResult result = board.update(req);
+        Board.ImageUpdatedResult result = board.update(req);
         uploadImages(result.getAddedImages(), result.getAddedImageFiles());
         deleteImages(result.getDeletedImages());
-        return BoardResponseDto.toDto(board, user.getNickname());
+        return BoardResponseDto.toDto(board,user.getNickname());
     }
 
     @Override
@@ -75,27 +88,92 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public List<BoardSimpleDto> search(String keyword, Pageable pageable) {
+    public List<BoardSimpleDto> searchBoard(String keyword, Pageable pageable) {
         Page<Board> boards = boardRepository.findByTitleContaining(keyword, pageable );
-        List<BoardSimpleDto> boardSimpleDtoList = boards.stream().map(i -> new BoardSimpleDto().toDto(i)).collect(Collectors.toList());
+        List<BoardSimpleDto> boardSimpleDtoList = boards.stream().map(i -> new BoardSimpleDto().toDto(i)).collect(toList());
         return boardSimpleDtoList;
     }
 
     @Override
-    public void uploadImages(List<Image> images, List<MultipartFile> fileImages) {
-        IntStream.rangeClosed(0, images.size())
-                .forEach(i -> fileService.upload(fileImages.get(i), images.get(i).getUniqueName()));
+    public String updateLikeOfBoard(Long id, User user) {
+        Board board = boardRepository.findById(id).orElseThrow(BoardNotFoundException::new);
+        if (!hasLikeBoard(board,user)) {
+            board.increaseLikeCount();
+            return createLikeBoard(board, user);
+        }
+        board.decreaseLikeCount();
+        return removeLikeBoard(board,user);
+
     }
 
     @Override
-    public void deleteImages(List<Image> images) {
+    public String updateOfFavoriteBoard(Long id, User user) {
+        Board board = boardRepository.findById(id).orElseThrow(BoardNotFoundException::new);
+        if (!hasFavoriteBoard(board,user)) {
+            board.increaseFavoritCount();
+            return createFavoriteBoard(board,user);
+        }
+        board.decreaseFavoritCount();
+        return removeFavoriteBoard(board,user);
+    }
+
+    @Override
+    public List<BoardSimpleDto> findBestBoards(Pageable pageable) {
+        // 5이상은 추천글
+        Page<Board> boards = boardRepository.findByLikedGreaterThanEqual(pageable, 5);
+        List<BoardSimpleDto> boardSimpleDtoList = new ArrayList<>();
+        boards.stream().forEach(i -> boardSimpleDtoList.add(new BoardSimpleDto().toDto(i)));
+        return boardSimpleDtoList;
+    }
+
+    private void uploadImages(List<Image> images, List<MultipartFile> fileImages) {
+        IntStream.range(0, images.size())
+                .forEach(i -> fileService.upload(fileImages.get(i), images.get(i).getUniqueName()));
+    }
+
+    private void deleteImages(List<Image> images) {
         images.forEach(i -> fileService.delete(i.getUniqueName()));
 
     }
 
-    public void validateBoardOwner(User user, Board board) {
+    private void validateBoardOwner(User user, Board board) {
         if (!user.equals(board.getUser())) {
             throw new MemberNotEqualsException();
         }
+    }
+
+    public String createLikeBoard(Board board, User user) {
+        LikeBoard likeBoard = new LikeBoard(board, user); // true 처리
+        likeBoardRepository.save(likeBoard);
+        return SUCCESS_LIKE_BOARD;
+    }
+
+    public String removeLikeBoard(Board board, User user) {
+        LikeBoard likeBoard = likeBoardRepository.findByBoardAndUser(board, user).orElseThrow(() -> {
+            throw new IllegalArgumentException("'좋아요' 기록을 찾을 수 없습니다.");
+        });
+        likeBoardRepository.delete(likeBoard);
+        return SUCCESS_UNLIKE_BOARD;
+    }
+
+    public boolean hasLikeBoard(Board board, User user) {
+        return likeBoardRepository.findByBoardAndUser(board, user).isPresent();
+    }
+
+    public String createFavoriteBoard(Board board, User user) {
+        Favorite favorite = new Favorite(board, user); // true 처리
+        favoriteRepository.save(favorite);
+        return SUCCESS_FAVORITE_BOARD;
+    }
+
+    public String removeFavoriteBoard(Board board, User user) {
+        Favorite favorite = favoriteRepository.findByBoardAndUser(board, user)
+                .orElseThrow(FavoriteNotFoundException::new);
+        favoriteRepository.delete(favorite);
+        return SUCCESS_UNFAVORITE_BOARD;
+    }
+
+    public boolean hasFavoriteBoard(Board board, User user) {
+        return favoriteRepository.findByBoardAndUser(board, user).isPresent();
     }
 }

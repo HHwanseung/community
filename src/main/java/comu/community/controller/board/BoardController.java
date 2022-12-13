@@ -1,4 +1,4 @@
-package comu.community.contoller.board;
+package comu.community.controller.board;
 
 import comu.community.dto.board.BoardCreateRequest;
 import comu.community.dto.board.BoardUpdateRequest;
@@ -46,11 +46,9 @@ public class BoardController {
     }
 
     @ApiOperation(value = "게시글 목록 조회")
-    @GetMapping("/boards")
+    @GetMapping("/boards/all")
     @ResponseStatus(HttpStatus.OK)
     public Response findAllBoards(@PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        // http//localhost:8080/api/boards/?page=0
-
         return Response.success(boardService.findAllBoards(pageable));
 
     }
@@ -63,7 +61,7 @@ public class BoardController {
     }
 
     @ApiOperation(value = "게시글 수정")
-    @PostMapping("/boards/{id}")
+    @PutMapping("/boards/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response updateBoard(@ApiParam(value = "게시글 id", required = true) @PathVariable Long id,
                                 @Valid @ModelAttribute BoardUpdateRequest req) {
@@ -85,12 +83,41 @@ public class BoardController {
     }
 
     @ApiOperation(value = "게시글 검색")
-    @GetMapping("boards/search")
+    @GetMapping("/boards/search")
     @ResponseStatus(HttpStatus.OK)
     public Response searchBoard(String keyword,
                                 @PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         // http://localhost:8080/api/boards/search?page=0
-        return Response.success(boardService.search(keyword,pageable));
-
+        return Response.success(boardService.searchBoard(keyword,pageable));
     }
+
+    @ApiOperation(value = "게시글 좋아요")
+    @PostMapping("/boards/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Response likeBoard(@ApiParam(value = "게시글 id", required = true) @PathVariable Long id) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepository.findByUsername(authentication.getName()).orElseThrow(MemberNotFoundException::new);
+        return Response.success(boardService.updateLikeOfBoard(id,user));
+    }
+
+    @ApiOperation(value = "게시글 즐겨찾기")
+    @PostMapping("/boards/{id}/favorites")
+    @ResponseStatus(HttpStatus.OK)
+    public Response favoriteBoard(@ApiParam(value = "게시글 id", required = true) @PathVariable Long id) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepository.findByUsername(authentication.getName()).orElseThrow(MemberNotFoundException::new);
+        return Response.success(boardService.updateOfFavoriteBoard(id,user));
+    }
+
+    @ApiOperation(value = "인기글 조회")
+    @GetMapping("/boards/best")
+    @ResponseStatus(HttpStatus.OK)
+    public Response getBestBoards(
+            @PageableDefault(size = 5, sort = "liked", direction = Sort.Direction.DESC) Pageable pageable) {
+        return Response.success(boardService.findBestBoards(pageable));
+    }
+
+
 }
