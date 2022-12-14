@@ -52,7 +52,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteUserInfo(User user) {
-
         userRepository.delete(user);
     }
 
