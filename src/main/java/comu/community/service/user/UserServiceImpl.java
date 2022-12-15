@@ -1,17 +1,13 @@
 package comu.community.service.user;
 
 import comu.community.dto.board.BoardSimpleDto;
-import comu.community.dto.user.UserDto;
+import comu.community.dto.user.UserEditRequestDto;
 import comu.community.entity.board.Favorite;
-import comu.community.entity.user.Role;
 import comu.community.entity.user.User;
-import comu.community.exception.MemberNotEqualsException;
 import comu.community.exception.MemberNotFoundException;
 import comu.community.repository.board.FavoriteRepository;
 import comu.community.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,22 +25,22 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public List<UserDto> findAllUsers() {
+    public List<UserEditRequestDto> findAllUsers() {
         List<User> users = userRepository.findAll();
-        List<UserDto> userDtos = new ArrayList<>();
+        List<UserEditRequestDto> userEditRequestDtos = new ArrayList<>();
         for (User user : users) {
-            userDtos.add(UserDto.toDto(user));
+            userEditRequestDtos.add(UserEditRequestDto.toDto(user));
         }
-        return userDtos;
+        return userEditRequestDtos;
     }
 
     @Override
-    public UserDto findUser(Long id) {
-        return UserDto.toDto(userRepository.findById(id).orElseThrow(MemberNotFoundException::new));
+    public UserEditRequestDto findUser(Long id) {
+        return UserEditRequestDto.toDto(userRepository.findById(id).orElseThrow(MemberNotFoundException::new));
     }
 
     @Override
-    public User updateUserInfo(User user, UserDto updateInfo) {
+    public User updateUserInfo(User user, UserEditRequestDto updateInfo) {
         user.editUser(updateInfo);
         return user;
 

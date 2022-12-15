@@ -1,6 +1,6 @@
 package comu.community.controller.user;
 
-import comu.community.dto.user.UserDto;
+import comu.community.dto.user.UserEditRequestDto;
 import comu.community.entity.user.User;
 import comu.community.exception.MemberNotFoundException;
 import comu.community.repository.user.UserRepository;
@@ -43,10 +43,10 @@ public class UserController {
     @ApiOperation(value = "회원 정보 수정", notes = "회원 정보를 수정")
     @ResponseStatus(HttpStatus.OK)
     @PutMapping("/users/{id}")
-    public Response updateUserInfo(@RequestBody UserDto userDto) {
+    public Response updateUserInfo(@RequestBody UserEditRequestDto usereditRequestDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByUsername(authentication.getName()).orElseThrow(MemberNotFoundException::new);
-        return Response.success(userService.updateUserInfo(user, userDto));
+        return Response.success(userService.updateUserInfo(user, usereditRequestDto));
     }
 
     @ApiOperation(value = "회원 탈퇴", notes = "회원을 탈퇴 시킴")
