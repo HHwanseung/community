@@ -22,6 +22,6 @@ public class CommentCreateRequest {
     @ApiModelProperty(value = "게시물 번호 ", notes = "게시물 번호를 입력해주세요", required = true)
     @NotBlank(message = "게물 번호를 입력해주세요")
     @Positive(message = "게시물 번호를 입력해주세요")
-    private Integer boardId;
+    private Long boardId;
 
 }

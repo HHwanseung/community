@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CommentDto {
 
-    private int id;
+    private Long id;
     private String content;
     private UserEditRequestDto usereditRequestDto;
 

@@ -49,11 +49,10 @@ public class CommentServiceImpl implements CommentService{
         Comment comment = commentRepository.findById(id).orElseThrow(CommentNotFoundException::new);
         Board board = boardRepository.findById(comment.getBoard().getId()).orElseThrow(BoardNotFoundException::new);
         if (comment.getUser().equals(user)) {
-            //삭제 진행
+            // 삭제 진행
             commentRepository.delete(comment);
-        }else {
+        } else {
             throw new MemberNotEqualsException();
         }
-
     }
 }
