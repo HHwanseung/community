@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
 @ApiOperation(value = "댓글 생성 요청")
@@ -20,7 +21,7 @@ public class CommentCreateRequest {
     private String content;
 
     @ApiModelProperty(value = "게시물 번호 ", notes = "게시물 번호를 입력해주세요", required = true)
-    @NotBlank(message = "게물 번호를 입력해주세요")
+    @NotNull(message = "게시물 번호를 입력해주세요")
     @Positive(message = "게시물 번호를 입력해주세요")
     private Long boardId;
 
