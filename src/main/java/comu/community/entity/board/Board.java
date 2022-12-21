@@ -47,6 +47,9 @@ public class Board extends BaseTimeEntity {
     @Column(nullable = true)
     private int favorited; // 즐겨찾기 수
 
+    @Column(nullable = false)
+    private boolean reported;
+
 
     public Board(String title, String content, User user, List<Image> images) {
         this.title = title;
@@ -99,6 +102,10 @@ public class Board extends BaseTimeEntity {
 
     private List<Image> convertImageFilesToImages(List<MultipartFile> imageFiles) {
         return imageFiles.stream().map(imageFile -> new Image(imageFile.getOriginalFilename())).collect(toList());
+    }
+
+    public boolean isReported() {
+        return this.reported;
     }
 
     public void increaseLikeCount() {
