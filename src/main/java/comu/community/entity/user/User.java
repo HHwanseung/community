@@ -37,6 +37,9 @@ public class User extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    @Column(nullable = false)
+    private boolean reported;
+
     @Builder
     public User(String username, String password, Role role) {
         this.username = username;
@@ -44,6 +47,10 @@ public class User extends BaseTimeEntity {
         this.name = name;
         this.nickname = nickname;
         this.role = role;
+    }
+
+    public boolean isReported() {
+        return this.reported;
     }
 
     public void editUser(UserEditRequestDto req) {
