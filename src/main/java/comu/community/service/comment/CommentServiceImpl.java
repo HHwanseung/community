@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,17 +28,17 @@ public class CommentServiceImpl implements CommentService{
     private final CommentRepository commentRepository;
     private final BoardRepository boardRepository;
 
-
     @Override
-    public List<CommentDto> findAll(CommentReadCondition condition) {
-        List<Comment> commentList = commentRepository.findByBoardId(condition.getBoardId());
-        List<CommentDto> commentDtoList = new ArrayList<>();
-        commentList.stream().forEach(i -> commentDtoList.add(new CommentDto().toDto(i)));
-        return commentDtoList;
+    public List<CommentDto> findAllComments(CommentReadCondition condition) {
+        List<Comment> comments = commentRepository.findByBoardId(condition.getBoardId());
+        List<CommentDto> commentsDto = comments.stream()
+                .map(comment -> new CommentDto().toDto(comment))
+                .collect(Collectors.toList());
+        return commentsDto;
     }
 
     @Override
-    public CommentDto create(CommentCreateRequest req, User user) {
+    public CommentDto createComment(CommentCreateRequest req, User user) {
         Board board = boardRepository.findById(req.getBoardId()).orElseThrow(BoardNotFoundException::new);
         Comment comment = new Comment(req.getContent(), user, board);
         commentRepository.save(comment);
@@ -45,13 +46,15 @@ public class CommentServiceImpl implements CommentService{
     }
 
     @Override
-    public void delete(Long id, User user) {
+    public void deleteComment(Long id, User user) {
         Comment comment = commentRepository.findById(id).orElseThrow(CommentNotFoundException::new);
-        Board board = boardRepository.findById(comment.getBoard().getId()).orElseThrow(BoardNotFoundException::new);
-        if (comment.getUser().equals(user)) {
-            // 삭제 진행
-            commentRepository.delete(comment);
-        } else {
+        validateDeleteComment(comment, user);
+        commentRepository.delete(comment);
+    }
+
+    @Override
+    public void validateDeleteComment(Comment comment, User user) {
+        if (!comment.isOwnComment(user)) {
             throw new MemberNotEqualsException();
         }
     }

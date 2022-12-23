@@ -30,7 +30,7 @@ public class CommentController {
     @GetMapping("/comments")
     @ResponseStatus(HttpStatus.OK)
     public Response findAll(@Valid CommentReadCondition condition) {
-        return Response.success(commentService.findAll(condition));
+        return Response.success(commentService.findAllComments(condition));
     }
 
     @ApiOperation(value = "댓글 작성")
@@ -39,7 +39,7 @@ public class CommentController {
     public Response create(@Valid @RequestBody CommentCreateRequest req) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByUsername(authentication.getName()).orElseThrow(MemberNotFoundException::new);
-        return Response.success(commentService.create(req, user));
+        return Response.success(commentService.createComment(req, user));
     }
 
     @ApiOperation(value = "댓글 삭제")
@@ -48,7 +48,7 @@ public class CommentController {
     public Response delete(@ApiParam(value = "댓글 id", required = true) @PathVariable Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByUsername(authentication.getName()).orElseThrow(MemberNotFoundException::new);
-        commentService.delete(id, user);
+        commentService.deleteComment(id, user);
         return Response.success();
     }
 

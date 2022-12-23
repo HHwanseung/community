@@ -40,4 +40,8 @@ public class Comment extends BaseTimeEntity {
         this.board = board;
     }
 
+    public boolean isOwnComment(User user) {
+        return this.user.equals(user);
+    }
+
 }
