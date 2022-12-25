@@ -44,7 +44,7 @@ public class ReportServiceImpl implements ReportService{
             UserReport userReport = new UserReport(reporter.getId(), reportedUser.getId(), req.getContent());
             userReportRepository.save(userReport);
 
-            if (userReportRepository.findByReportedUserId(req.getReportedUserId()).size() >= 3) {
+            if (userReportRepository.findByReportedUserId(req.getReportedUserId()).size() >= 1) {
                 // 신고 수 10 이상일 시 true 설정
                 reportedUser.setReported(true);
             }
