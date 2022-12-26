@@ -6,10 +6,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Api(value = "Admin Controller", tags = "Admin")
 @RequiredArgsConstructor
@@ -22,10 +19,29 @@ public class AdminController {
     @ApiOperation(value = "정지 유저 관리")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/admin/manages/users")
-    public Response ManageReportedUser() {
+    public Response manageReportedUser() {
         return Response.success(adminService.manageReportedUser());
     }
 
+    @ApiOperation(value = "신고된 유저 정지 해제")
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping("/admin/manages/users/{id}")
+    public Response unlockUser(@PathVariable Long id) {
+        return Response.success(adminService.unlockUser(id));
+    }
 
+    @ApiOperation(value = "게시물 관리")
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/admin/manages/boards")
+    public Response manageReportBoards() {
+        return Response.success(adminService.manageReportedBoards());
+    }
+
+    @ApiOperation(value = "신고된 게시물 관리")
+    @ResponseStatus(HttpStatus.OK)
+    @PostMapping ("/admin/manages/boards/{id}")
+    public Response unlockBoard(@PathVariable Long id) {
+        return Response.success(adminService.unlockBoard(id));
+    }
 
 }
