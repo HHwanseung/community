@@ -46,7 +46,7 @@ public class BoardController {
     }
 
     @ApiOperation(value = "게시글 목록 조회")
-    @GetMapping("/boards/all")
+    @GetMapping("/boards/all/{categoryId}")
     @ResponseStatus(HttpStatus.OK)
     public Response findAllBoards(@PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         return Response.success(boardService.findAllBoards(pageable));
