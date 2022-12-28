@@ -30,7 +30,7 @@ public class ReportController {
     @ApiOperation(value = "유저 신고", notes = "유저를 신고합니다")
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/reports/users")
-    public Response reportUSer(@Valid @RequestBody UserReportRequest userReportRequest) {
+    public Response reportUser(@Valid @RequestBody UserReportRequest userReportRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByUsername(authentication.getName()).orElseThrow(MemberNotFoundException::new);
         return Response.success(reportService.reportUser(user, userReportRequest));

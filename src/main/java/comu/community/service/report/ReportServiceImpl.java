@@ -6,8 +6,8 @@ import comu.community.dto.report.UserReportRequest;
 import comu.community.dto.report.UserReportResponse;
 import comu.community.dto.user.UserEditRequestDto;
 import comu.community.entity.board.Board;
-import comu.community.entity.report.BoardReport;
-import comu.community.entity.report.UserReport;
+import comu.community.entity.report.BoardReportHistory;
+import comu.community.entity.report.UserReportHistory;
 import comu.community.entity.user.User;
 import comu.community.exception.AlreadyReportException;
 import comu.community.exception.BoardNotFoundException;
@@ -23,35 +23,43 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class ReportServiceImpl implements ReportService{
-
-    private final UserReportRepository userReportRepository;
-    private final BoardReportRepository boardReportRepository;
+    private final static long NORMAL_USER_REPORT_LIMIT_FOR_BEING_REPORTED = 1;
+    private final static long NORMAL_BOARD_REPORT_LIMIT_FOR_BEING_REPORTED = 10L;
+    private final UserReportRepository userReportHistoryRepository;
+    private final BoardReportRepository boardReportHistoryRepository;
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
 
 
     @Override
     public UserReportResponse reportUser(User reporter, UserReportRequest req) {
-
+        validateUserReportRequest(reporter, req);
         User reportedUser = userRepository.findById(req.getReportedUserId()).orElseThrow(MemberNotFoundException::new);
+        UserReportHistory userReportHistory = createUserReportHistory(reporter, reportedUser, req);
+        checkUserStatusIsBeingReported(reportedUser, req);
+        return new UserReportResponse(userReportHistory.getId(), UserEditRequestDto.toDto(reportedUser),
+                req.getContent());
+    }
 
-        if (reporter.getId() == req.getReportedUserId()) {
+    private void checkUserStatusIsBeingReported(User reportedUser, UserReportRequest req) {
+        if (userReportHistoryRepository.findByReportedUserId(req.getReportedUserId()).size() >= NORMAL_USER_REPORT_LIMIT_FOR_BEING_REPORTED) {
+            reportedUser.setStatusIsBeingReported();
+        }
+    }
+
+    private UserReportHistory createUserReportHistory(User reporter, User reportedUser, UserReportRequest req) {
+        UserReportHistory userReportHistory = new UserReportHistory(reporter.getId(), reportedUser.getId(), req.getContent());
+        userReportHistoryRepository.save(userReportHistory);
+        return userReportHistory;
+    }
+
+    private void validateUserReportRequest(User reporter, UserReportRequest req) {
+        if (reporter.isReportMySelf(req.getReportedUserId())) {
             throw new NotSelfReportException();
         }
 
-        if (userReportRepository.findByReporterIdAndReportedUserId(reporter.getId(), req.getReportedUserId()) == null) {
-            // 신고 한 적이 없다면, 테이블 생성 후 신고 처리 (ReportedUser의 User테이블 boolean 값 true 변경 ==> 신고처리)
-            UserReport userReport = new UserReport(reporter.getId(), reportedUser.getId(), req.getContent());
-            userReportRepository.save(userReport);
-
-            if (userReportRepository.findByReportedUserId(req.getReportedUserId()).size() >= 1) {
-                // 신고 수 10 이상일 시 true 설정
-                reportedUser.setReported(true);
-            }
-
-            UserReportResponse res = new UserReportResponse(userReport.getId(), UserEditRequestDto.toDto(reportedUser), req.getContent());
-            return res;
-        } else {
+        if (userReportHistoryRepository.existsByReporterIdAndReportedUserId(reporter.getId(),
+                req.getReportedUserId())) {
             throw new AlreadyReportException();
         }
     }
@@ -64,12 +72,12 @@ public class ReportServiceImpl implements ReportService{
             throw new NotSelfReportException();
         }
 
-        if (boardReportRepository.findByReporterIdAndReportedBoardId(reporter.getId(), req.getReportedBoardId()) == null) {
+        if (boardReportHistoryRepository.findByReporterIdAndReportedBoardId(reporter.getId(), req.getReportedBoardId()) == null) {
             // 신고 한 적이 없다면, 테이블 생성 후 신고 처리
-            BoardReport boardReport = new BoardReport(reporter.getId(), reportedBoard.getId(), req.getContent());
-            boardReportRepository.save(boardReport);
+            BoardReportHistory boardReport = new BoardReportHistory(reporter.getId(), reportedBoard.getId(), req.getContent());
+            boardReportHistoryRepository.save(boardReport);
 
-            if (boardReportRepository.findByReportedBoardId(req.getReportedBoardId()).size() >= 10) {
+            if (boardReportHistoryRepository.findByReportedBoardId(req.getReportedBoardId()).size() >= 10) {
                 reportedBoard.setReported(true);
             }
 
