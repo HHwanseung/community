@@ -3,14 +3,12 @@ package comu.community.entity.user;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import comu.community.dto.user.UserEditRequestDto;
 import comu.community.entity.BaseTimeEntity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -46,6 +44,7 @@ public class User extends BaseTimeEntity {
         this.password = password;
         this.name = name;
         this.nickname = nickname;
+        this.reported = false;
         this.role = role;
     }
 
@@ -57,4 +56,17 @@ public class User extends BaseTimeEntity {
         name = req.getName();
         nickname = req.getNickname();
     }
+
+    public void unlockReport() {
+        this.reported = false;
+    }
+
+    public boolean isReportMySelf(Long id) {
+        return this.id == id;
+    }
+
+    public void setStatusIsBeingReported() {
+        this.reported = true;
+    }
+
 }
