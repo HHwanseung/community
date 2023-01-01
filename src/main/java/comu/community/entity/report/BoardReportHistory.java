@@ -9,7 +9,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class BoardReport extends BaseTimeEntity {
+public class BoardReportHistory extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,7 +24,7 @@ public class BoardReport extends BaseTimeEntity {
     @Column(nullable = false)
     private String content;
 
-    public BoardReport(Long reporterId, Long reportedBoardId, String content) {
+    public BoardReportHistory(Long reporterId, Long reportedBoardId, String content) {
         this.reporterId = reporterId;
         this.reportedBoardId = reportedBoardId;
         this.content = content;
