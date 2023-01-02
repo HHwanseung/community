@@ -100,6 +100,22 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.POST, "/api/reports/users").authenticated()
                 .antMatchers(HttpMethod.POST, "/api/reports/boards").authenticated()
 
+//                .antMatchers(HttpMethod.GET, "/api/admin/manages/users").access("hasRole('ROLE_ADMIN')")
+//                .antMatchers(HttpMethod.POST, "/api/admin/manages/users/{id}").access("hasRole('ROLE_ADMIN')")
+//                .antMatchers(HttpMethod.GET, "/api/admin/manages/boards").access("hasRole('ROLE_ADMIN')")
+//                .antMatchers(HttpMethod.POST, "/api/admin/manages/boards/{id}").access("hasRole('ROLE_ADMIN')")
+                .antMatchers(HttpMethod.GET, "/api/admin/manages/users").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+                .antMatchers(HttpMethod.POST, "/api/admin/manages/users/{id}").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+                .antMatchers(HttpMethod.GET, "/api/admin/manages/boards").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+                .antMatchers(HttpMethod.POST, "/api/admin/manages/boards/{id}").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+
+                .antMatchers(HttpMethod.GET, "/api/categories").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+//                .antMatchers(HttpMethod.POST, "/api/categories").access("hasRole('ROLE_ADMIN')")
+//                .antMatchers(HttpMethod.POST, "/api/categories/start").access("hasRole('ROLE_ADMIN')")
+//                .antMatchers(HttpMethod.DELETE, "/api/categories/{id}").access("hasRole('ROLE_ADMIN')")
+                .antMatchers(HttpMethod.POST, "/api/categories").access("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
+                .antMatchers(HttpMethod.POST, "/api/categories/start").access("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
+                .antMatchers(HttpMethod.DELETE, "/api/categories/{id}").access("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")
                 .anyRequest().hasAnyRole("ROLE_ADMIN")
 
                 // JwtFilter 를 addFilterBefore 로 등록했던 JwtSecurityConfig 클래스를 적용
