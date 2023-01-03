@@ -18,7 +18,7 @@ import static comu.community.response.Response.success;
 @Api(value = "Sing Controller", tags = "Sign")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/auth")
+@RequestMapping("/api")
 public class AuthController {
 
     private final AuthService authService;
