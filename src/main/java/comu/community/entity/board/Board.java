@@ -2,6 +2,7 @@ package comu.community.entity.board;
 
 import comu.community.dto.board.BoardUpdateRequest;
 import comu.community.entity.BaseTimeEntity;
+import comu.community.entity.category.Category;
 import comu.community.entity.user.User;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
@@ -38,6 +39,11 @@ public class Board extends BaseTimeEntity {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Category category;
+
     @OneToMany(mappedBy = "board", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Image> images;
 
@@ -51,10 +57,12 @@ public class Board extends BaseTimeEntity {
     private boolean reported;
 
 
-    public Board(String title, String content, User user, List<Image> images) {
+    public Board(String title, String content, User user, Category category, List<Image> images) {
         this.title = title;
         this.content = content;
         this.user = user;
+        this.category = category;
+        this.reported = false;
         this.liked = 0;
         this.favorited = 0;
         this.images = new ArrayList<>();
@@ -122,6 +130,14 @@ public class Board extends BaseTimeEntity {
 
     public void decreaseFavoritCount() {
         this.favorited -= 1;
+    }
+
+    public void setStatusIsBeingReported() {
+        this.reported = true;
+    }
+
+    public void unReportedBoard() {
+        this.reported = false;
     }
 
 

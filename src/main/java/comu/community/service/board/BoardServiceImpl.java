@@ -5,14 +5,16 @@ import comu.community.entity.board.Board;
 import comu.community.entity.board.Favorite;
 import comu.community.entity.board.Image;
 import comu.community.entity.board.LikeBoard;
+import comu.community.entity.category.Category;
 import comu.community.entity.user.User;
 import comu.community.exception.BoardNotFoundException;
+import comu.community.exception.CategoryNotFoundException;
 import comu.community.exception.FavoriteNotFoundException;
 import comu.community.exception.MemberNotEqualsException;
 import comu.community.repository.board.BoardRepository;
 import comu.community.repository.board.FavoriteRepository;
 import comu.community.repository.board.LikeBoardRepository;
-import comu.community.repository.user.UserRepository;
+import comu.community.repository.category.CategoryRepository;
 import comu.community.service.file.FileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -22,7 +24,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.toList;
@@ -35,27 +36,29 @@ public class BoardServiceImpl implements BoardService {
     private final static String SUCCESS_UNLIKE_BOARD = "좋아요 취소 완료";
     private final static String SUCCESS_FAVORITE_BOARD = "즐겨찾기 처리 완료";
     private final static String SUCCESS_UNFAVORITE_BOARD = "즐겨찾기 취소 완료";
+    private final static int RECOMMEND_SET_COUNT = 1;
 
-    private final UserRepository userRepository;
     private final BoardRepository boardRepository;
     private final FileService fileService;
     private final LikeBoardRepository likeBoardRepository;
     private final FavoriteRepository favoriteRepository;
+    private final CategoryRepository categoryRepository;
 
 
     @Override
-    public BoardCreateResponse createBoard(BoardCreateRequest req, User user) {
-
+    public BoardCreateResponse createBoard(BoardCreateRequest req, Long categoryId, User user) {
         List<Image> images = req.getImages().stream().map(i -> new Image(i.getOriginalFilename())).collect(toList());
-        Board board = boardRepository.save(new Board(req.getTitle(), req.getContent(), user, images));
+        Category category = categoryRepository.findById(categoryId).orElseThrow(CategoryNotFoundException::new);
+        Board board = boardRepository.save(new Board(req.getTitle(), req.getContent(), user, category, images));
         uploadImages(board.getImages(), req.getImages());
         return new BoardCreateResponse(board.getId(), board.getTitle(), board.getContent());
     }
 
     @Override
-    public List<BoardSimpleDto> findAllBoards(Pageable pageable) {
-        Page<Board> boards = boardRepository.findAll(pageable);
-        List<BoardSimpleDto> boardSimpleDtoList = boards.stream().map(i -> new BoardSimpleDto().toDto(i))
+    public List<BoardSimpleDto> findAllBoards(Pageable pageable, Long categoryId) {
+        Page<Board> boards = boardRepository.findAllByCategoryId(pageable, categoryId);
+        List<BoardSimpleDto> boardSimpleDtoList = boards.stream()
+                .map(i -> new BoardSimpleDto().toDto(i))
                 .collect(toList());
         return boardSimpleDtoList;
     }
@@ -75,7 +78,7 @@ public class BoardServiceImpl implements BoardService {
         Board.ImageUpdatedResult result = board.update(req);
         uploadImages(result.getAddedImages(), result.getAddedImageFiles());
         deleteImages(result.getDeletedImages());
-        return BoardResponseDto.toDto(board,user.getNickname());
+        return BoardResponseDto.toDto(board, user.getNickname());
     }
 
     @Override
@@ -118,8 +121,7 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public List<BoardSimpleDto> findBestBoards(Pageable pageable) {
-        // 5이상은 추천글
-        Page<Board> boards = boardRepository.findByLikedGreaterThanEqual(pageable, 5);
+        Page<Board> boards = boardRepository.findByLikedGreaterThanEqual(pageable, RECOMMEND_SET_COUNT);
         List<BoardSimpleDto> boardSimpleDtoList = new ArrayList<>();
         boards.stream().forEach(i -> boardSimpleDtoList.add(new BoardSimpleDto().toDto(i)));
         return boardSimpleDtoList;
@@ -132,7 +134,6 @@ public class BoardServiceImpl implements BoardService {
 
     private void deleteImages(List<Image> images) {
         images.forEach(i -> fileService.delete(i.getUniqueName()));
-
     }
 
     private void validateBoardOwner(User user, Board board) {

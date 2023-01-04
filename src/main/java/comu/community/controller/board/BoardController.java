@@ -7,7 +7,6 @@ import comu.community.exception.MemberNotFoundException;
 import comu.community.repository.user.UserRepository;
 import comu.community.response.Response;
 import comu.community.service.board.BoardService;
-import comu.community.service.user.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -31,26 +30,25 @@ import javax.validation.Valid;
 public class BoardController {
 
     private final BoardService boardService;
-    private final UserService userService;
     private final UserRepository userRepository;
 
     @ApiOperation(value = "게시글 생성")
     @PostMapping("/boards")
     @ResponseStatus(HttpStatus.CREATED)
-    public Response createBoard(@Valid @ModelAttribute BoardCreateRequest req) {
-
+    public Response createBoard(@Valid @ModelAttribute BoardCreateRequest req,
+                           @RequestParam(value = "category", defaultValue = "1") Long categoryId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByUsername(authentication.getName()).orElseThrow(MemberNotFoundException::new);
 
-        return Response.success(boardService.createBoard(req, user));
+        return Response.success(boardService.createBoard(req, categoryId, user));
     }
 
     @ApiOperation(value = "게시글 목록 조회")
     @GetMapping("/boards/all/{categoryId}")
     @ResponseStatus(HttpStatus.OK)
-    public Response findAllBoards(@PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        return Response.success(boardService.findAllBoards(pageable));
-
+    public Response findAllBoards(@ApiParam(value = "카테고리 id", required = true) @PathVariable Long categoryId,
+                                  @PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        return Response.success(boardService.findAllBoards(pageable, categoryId));
     }
 
     @ApiOperation(value = "게시글 단건 조회")
@@ -68,7 +66,7 @@ public class BoardController {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByUsername(authentication.getName()).orElseThrow(MemberNotFoundException::new);
-        return Response.success(boardService.updateBoard(id,req,user));
+        return Response.success(boardService.updateBoard(id, req, user));
     }
 
     @ApiOperation(value = "게시글 삭제")
