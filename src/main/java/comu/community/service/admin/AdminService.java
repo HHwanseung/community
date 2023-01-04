@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface AdminService {
 
-    List<UserEditRequestDto> manageReportedUser();
-    UserEditRequestDto unlockUser(Long id);
-    List<BoardSimpleDto> manageReportedBoards();
-    BoardSimpleDto unlockBoard(Long id);
+    List<UserEditRequestDto> findReportedUsers();
+    UserEditRequestDto processUnlockUser(Long id);
+    List<BoardSimpleDto> findReportedBoards();
+    BoardSimpleDto processUnlockBoard(Long id);
 
 }

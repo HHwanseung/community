@@ -20,28 +20,28 @@ public class AdminController {
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/admin/manages/users")
     public Response manageReportedUser() {
-        return Response.success(adminService.manageReportedUser());
+        return Response.success(adminService.findReportedUsers());
     }
 
     @ApiOperation(value = "신고된 유저 정지 해제")
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/admin/manages/users/{id}")
     public Response unlockUser(@PathVariable Long id) {
-        return Response.success(adminService.unlockUser(id));
+        return Response.success(adminService.processUnlockUser(id));
     }
 
     @ApiOperation(value = "게시물 관리")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping("/admin/manages/boards")
     public Response manageReportBoards() {
-        return Response.success(adminService.manageReportedBoards());
+        return Response.success(adminService.findReportedBoards());
     }
 
     @ApiOperation(value = "신고된 게시물 관리")
     @ResponseStatus(HttpStatus.OK)
     @PostMapping ("/admin/manages/boards/{id}")
     public Response unlockBoard(@PathVariable Long id) {
-        return Response.success(adminService.unlockBoard(id));
+        return Response.success(adminService.processUnlockBoard(id));
     }
 
 }
