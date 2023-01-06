@@ -7,9 +7,9 @@ import java.util.List;
 
 public interface CategoryService {
 
-    List<CategoryDto> findAll();
+    List<CategoryDto> findAllCategory();
     void createAtFirst();
-    void create(CategoryCreateRequest req);
-    void delete(Long id);
+    void createCategory(CategoryCreateRequest req);
+    void deleteCategory(Long id);
 
 }
