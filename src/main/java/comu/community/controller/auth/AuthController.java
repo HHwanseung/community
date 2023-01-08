@@ -32,12 +32,14 @@ public class AuthController {
     }
 
     @ApiOperation(value = "로그인", notes = "로그인을 한다.")
+    @ResponseStatus(HttpStatus.OK)
     @PostMapping("/sign-in")
     public Response signIn(@Valid @RequestBody LoginRequestDto req) {
         return success(authService.signIn(req));
 
     }
     @ApiOperation(value = "토큰 재발급", notes = "토큰 재발급 요청")
+    @ResponseStatus(HttpStatus.OK)
     @PostMapping("/reissue")
     public Response reissue(@RequestBody TokenRequestDto tokenRequestDto) {
         return success(authService.reissue(tokenRequestDto));
