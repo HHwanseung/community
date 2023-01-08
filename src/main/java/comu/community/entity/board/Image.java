@@ -2,10 +2,7 @@ package comu.community.entity.board;
 
 import comu.community.entity.BaseTimeEntity;
 import comu.community.exception.UnsupportedImageFormatException;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -16,7 +13,8 @@ import java.util.UUID;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
 public class Image extends BaseTimeEntity {
 
     @Id
