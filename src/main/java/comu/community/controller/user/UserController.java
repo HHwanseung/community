@@ -42,7 +42,7 @@ public class UserController {
 
     @ApiOperation(value = "회원 정보 수정", notes = "회원 정보를 수정")
     @ResponseStatus(HttpStatus.OK)
-    @PutMapping("/users/{id}")
+    @PutMapping("/users")
     public Response updateUserInfo(@RequestBody UserEditRequestDto usereditRequestDto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByUsername(authentication.getName()).orElseThrow(MemberNotFoundException::new);
