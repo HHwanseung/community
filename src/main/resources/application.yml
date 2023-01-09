@@ -1,13 +1,9 @@
+server:
+  port: 8080
+
 spring:
   profiles:
-    include: oauth
-    active: local
-
-  datasource:
-    url: jdbc:mysql://localhost:3306/comuDB
-    username: comu
-    password:
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    active: prod
 
   jpa:
     open-in-view: true
@@ -24,8 +20,6 @@ spring:
     pathmatch:
       matching-strategy: ant_path_matcher
 
-
-
   thymeleaf:
     cache: false
 
@@ -34,15 +28,10 @@ spring:
       max-file-size: 30MB
       max-request-size: 10MB
 
-#comu.community.upload.path = /Users/hhwanseung/study/communityImage
-
-
-
 logging.level:
   org.hibernate.SQL: debug
 #    org.hibernate.type: trace
 
-jwt:
-  secret: c3ByaW5nLWJvb3Qtc2VjdXJpdHktand0LXR1dG9yaWFsLWppd29vbi1zcHJpbmctYm9vdC1zZWN1cml0eS1qd3QtdHV0b3JpYWwK
+
 
 
