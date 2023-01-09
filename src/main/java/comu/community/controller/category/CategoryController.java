@@ -46,7 +46,7 @@ public class CategoryController {
     @ApiOperation(value = "카테고리 삭제")
     @DeleteMapping("/categories/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Response deleteCategory(@ApiParam(value = "카테고리 id", required = true) @PathVariable Long id) {
+    public Response deleteCategory(@ApiParam(value = "카테고리 id", required = true) @PathVariable int id) {
         categoryService.deleteCategory(id);
         return Response.success();
     }

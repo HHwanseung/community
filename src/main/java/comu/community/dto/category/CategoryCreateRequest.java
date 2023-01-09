@@ -21,6 +21,6 @@ public class CategoryCreateRequest {
     private String name;
 
     @ApiModelProperty(value = "부모 카테고리 id", notes = "부모 카테고리의 id를 입력하세요")
-    private Long parentId;
+    private Integer parentId;
 
 }

@@ -10,6 +10,6 @@ public interface CategoryService {
     List<CategoryDto> findAllCategory();
     void createAtFirst();
     void createCategory(CategoryCreateRequest req);
-    void deleteCategory(Long id);
+    void deleteCategory(int id);
 
 }
