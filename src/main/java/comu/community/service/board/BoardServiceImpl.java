@@ -18,7 +18,9 @@ import comu.community.repository.category.CategoryRepository;
 import comu.community.service.file.FileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -46,7 +48,7 @@ public class BoardServiceImpl implements BoardService {
 
 
     @Override
-    public BoardCreateResponse createBoard(BoardCreateRequest req, Long categoryId, User user) {
+    public BoardCreateResponse createBoard(BoardCreateRequest req, int categoryId, User user) {
         List<Image> images = req.getImages().stream().map(i -> new Image(i.getOriginalFilename())).collect(toList());
         Category category = categoryRepository.findById(categoryId).orElseThrow(CategoryNotFoundException::new);
         Board board = boardRepository.save(new Board(req.getTitle(), req.getContent(), user, category, images));
@@ -55,17 +57,26 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public List<BoardSimpleDto> findAllBoards(Pageable pageable, Long categoryId) {
-        Page<Board> boards = boardRepository.findAllByCategoryId(pageable, categoryId);
+    public BoardFindAllWithPagingResponseDto findAllBoards(Integer page, int categoryId) {
+        Page<Board> boards = makePageBoards(page, categoryId);
+        return responsePagingBoards(boards);
+    }
+
+    private BoardFindAllWithPagingResponseDto responsePagingBoards(Page<Board> boards) {
         List<BoardSimpleDto> boardSimpleDtoList = boards.stream()
                 .map(i -> new BoardSimpleDto().toDto(i))
                 .collect(toList());
-        return boardSimpleDtoList;
+        return BoardFindAllWithPagingResponseDto.toDto(boardSimpleDtoList, new PageInfoDto(boards));
+    }
+
+    private Page<Board> makePageBoards(Integer page, int categoryId) {
+        PageRequest pageRequest = PageRequest.of(page, 10, Sort.by("id").descending());
+        Page<Board> boards = boardRepository.findAllByCategoryId(pageRequest, categoryId);
+        return boards;
     }
 
     @Override
     public BoardResponseDto findBoard(Long id) {
-
         Board board = boardRepository.findById(id).orElseThrow(BoardNotFoundException::new);
         User user = board.getUser();
         return BoardResponseDto.toDto(board, user.getNickname());
@@ -112,10 +123,10 @@ public class BoardServiceImpl implements BoardService {
     public String updateOfFavoriteBoard(Long id, User user) {
         Board board = boardRepository.findById(id).orElseThrow(BoardNotFoundException::new);
         if (!hasFavoriteBoard(board,user)) {
-            board.increaseFavoritCount();
+            board.increaseFavoriteCount();
             return createFavoriteBoard(board,user);
         }
-        board.decreaseFavoritCount();
+        board.decreaseFavoriteCount();
         return removeFavoriteBoard(board,user);
     }
 

@@ -36,19 +36,18 @@ public class BoardController {
     @PostMapping("/boards")
     @ResponseStatus(HttpStatus.CREATED)
     public Response createBoard(@Valid @ModelAttribute BoardCreateRequest req,
-                           @RequestParam(value = "category", defaultValue = "1") Long categoryId) {
+                           @RequestParam(value = "category", defaultValue = "1") int categoryId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByUsername(authentication.getName()).orElseThrow(MemberNotFoundException::new);
 
         return Response.success(boardService.createBoard(req, categoryId, user));
     }
 
-    @ApiOperation(value = "게시글 목록 조회")
+    @ApiOperation(value = "게시글 목록 조회", notes = "게시글 목록을 조회합니다.")
     @GetMapping("/boards/all/{categoryId}")
     @ResponseStatus(HttpStatus.OK)
-    public Response findAllBoards(@ApiParam(value = "카테고리 id", required = true) @PathVariable Long categoryId,
-                                  @PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        return Response.success(boardService.findAllBoards(pageable, categoryId));
+    public Response findAllBoards(@ApiParam(value = "카테고리 id", required = true) @PathVariable int categoryId, @RequestParam(defaultValue = "0") Integer page) {
+        return Response.success(boardService.findAllBoards(page, categoryId));
     }
 
     @ApiOperation(value = "게시글 단건 조회")
@@ -116,6 +115,5 @@ public class BoardController {
             @PageableDefault(size = 5, sort = "liked", direction = Sort.Direction.DESC) Pageable pageable) {
         return Response.success(boardService.findBestBoards(pageable));
     }
-
 
 }

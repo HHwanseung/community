@@ -8,8 +8,8 @@ import java.util.List;
 
 public interface BoardService {
 
-    BoardCreateResponse createBoard(BoardCreateRequest req, Long categoryId, User user);
-    List<BoardSimpleDto> findAllBoards(Pageable pageable, Long categoryId);
+    BoardCreateResponse createBoard(BoardCreateRequest req, int categoryId, User user);
+    BoardFindAllWithPagingResponseDto findAllBoards(Integer page, int categoryId);
     BoardResponseDto findBoard(Long id);
     BoardResponseDto updateBoard(Long id, BoardUpdateRequest req, User user);
     void deleteBoard(Long id, User user);
