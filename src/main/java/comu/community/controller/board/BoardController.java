@@ -60,12 +60,12 @@ public class BoardController {
     @ApiOperation(value = "게시글 수정")
     @PutMapping("/boards/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Response updateBoard(@ApiParam(value = "게시글 id", required = true) @PathVariable Long id,
+    public Response editBoard(@ApiParam(value = "게시글 id", required = true) @PathVariable Long id,
                                 @Valid @ModelAttribute BoardUpdateRequest req) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userRepository.findByUsername(authentication.getName()).orElseThrow(MemberNotFoundException::new);
-        return Response.success(boardService.updateBoard(id, req, user));
+        return Response.success(boardService.editBoard(id, req, user));
     }
 
     @ApiOperation(value = "게시글 삭제")

@@ -83,7 +83,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public BoardResponseDto updateBoard(Long id, BoardUpdateRequest req, User user) {
+    public BoardResponseDto editBoard(Long id, BoardUpdateRequest req, User user) {
         Board board = boardRepository.findById(id).orElseThrow(BoardNotFoundException::new);
         validateBoardOwner(user, board);
         Board.ImageUpdatedResult result = board.update(req);
@@ -147,7 +147,7 @@ public class BoardServiceImpl implements BoardService {
         images.forEach(i -> fileService.delete(i.getUniqueName()));
     }
 
-    private void validateBoardOwner(User user, Board board) {
+    public void validateBoardOwner(User user, Board board) {
         if (!user.equals(board.getUser())) {
             throw new MemberNotEqualsException();
         }

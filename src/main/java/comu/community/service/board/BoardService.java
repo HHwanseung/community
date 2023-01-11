@@ -11,7 +11,7 @@ public interface BoardService {
     BoardCreateResponse createBoard(BoardCreateRequest req, int categoryId, User user);
     BoardFindAllWithPagingResponseDto findAllBoards(Integer page, int categoryId);
     BoardResponseDto findBoard(Long id);
-    BoardResponseDto updateBoard(Long id, BoardUpdateRequest req, User user);
+    BoardResponseDto editBoard(Long id, BoardUpdateRequest req, User user);
     void deleteBoard(Long id, User user);
     List<BoardSimpleDto> searchBoard(String keyword, Pageable pageable);
     String updateLikeOfBoard(Long id, User user);

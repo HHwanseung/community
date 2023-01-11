@@ -62,10 +62,10 @@ public class Board extends BaseTimeEntity {
         this.title = title;
         this.content = content;
         this.user = user;
-        this.category = category;
-        this.reported = false;
         this.liked = 0;
         this.favorited = 0;
+        this.reported = false;
+        this.category = category;
         this.images = new ArrayList<>();
         addImages(images);
     }
@@ -79,6 +79,7 @@ public class Board extends BaseTimeEntity {
         return result;
     }
 
+
     private void addImages(List<Image> added) {
         added.stream().forEach(i -> {
             images.add(i);
@@ -90,22 +91,22 @@ public class Board extends BaseTimeEntity {
         deleted.stream().forEach(di -> this.images.remove(di));
     }
 
-    private ImageUpdatedResult findImageUpdatedResult(List<MultipartFile> addImageFiles, List<Integer> deletedImageIds) {
-        List<Image> addedImages = convertImageFilesToImages(addImageFiles);
+    private ImageUpdatedResult findImageUpdatedResult(List<MultipartFile> addedImageFiles,
+                                                      List<Integer> deletedImageIds) {
+        List<Image> addedImages = convertImageFilesToImages(addedImageFiles);
         List<Image> deletedImages = convertImageIdsToImages(deletedImageIds);
-        return new ImageUpdatedResult(addImageFiles, addedImages, deletedImages);
-
+        return new ImageUpdatedResult(addedImageFiles, addedImages, deletedImages);
     }
 
     private List<Image> convertImageIdsToImages(List<Integer> imageIds) {
         return imageIds.stream()
-                .map(id -> convertImageFilesToImages(id))
+                .map(id -> convertImageIdToImage(id))
                 .filter(i -> i.isPresent())
                 .map(i -> i.get())
                 .collect(toList());
     }
 
-    private Optional<Image> convertImageFilesToImages(int id) {
+    private Optional<Image> convertImageIdToImage(int id) {
         return this.images.stream().filter(i -> i.getId() == (id)).findAny();
     }
 
@@ -125,11 +126,11 @@ public class Board extends BaseTimeEntity {
         this.liked -= 1;
     }
 
-    public void increaseFavoritCount() {
+    public void increaseFavoriteCount() {
         this.favorited += 1;
     }
 
-    public void decreaseFavoritCount() {
+    public void decreaseFavoriteCount() {
         this.favorited -= 1;
     }
 
@@ -141,14 +142,12 @@ public class Board extends BaseTimeEntity {
         this.reported = false;
     }
 
-
     @Getter
     @AllArgsConstructor
     public static class ImageUpdatedResult {
         private List<MultipartFile> addedImageFiles;
         private List<Image> addedImages;
         private List<Image> deletedImages;
-
     }
 
 
