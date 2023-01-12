@@ -19,7 +19,11 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.List;
 
 import static comu.community.entity.user.Role.ROLE_USER;
 
@@ -41,14 +45,9 @@ public class SecurityConfig {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        //CSRF 설정 Disable()
-        http
-                .csrf().disable();
-
-        http
+        http.csrf().disable()
                 // exception handling 할 때 우리가 만든 클래스를 추가
                 .exceptionHandling()
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
@@ -63,8 +62,8 @@ public class SecurityConfig {
                 // 로그인, 회원가입 API 는 토큰이 없는 상태에서 요청이 들어오기 때문에 permitAll 설정
                 .and()
                 .authorizeRequests()
-
-                .antMatchers("/swagger-ui/**", "/v3/**", "/test").permitAll() // swagger
+//                .antMatchers("/swagger-ui/**", "/v3/**", "/test").permitAll() // swagger
+                .antMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**").permitAll() // swagger
                 .antMatchers(HttpMethod.GET, "/image/**").permitAll()
 
                 .antMatchers("/api/sign-up", "/api/sign-in", "/api/reissue").permitAll()
