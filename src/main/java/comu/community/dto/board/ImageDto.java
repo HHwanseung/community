@@ -8,7 +8,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class ImageDto {
 
-    private Long id;
+    private int id;
     private String originName;
     private String uniqueName;
 
