@@ -149,10 +149,6 @@ public class Board extends BaseTimeEntity {
         private List<Image> addedImages;
         private List<Image> deletedImages;
     }
-
-
-
-
 }
 
 

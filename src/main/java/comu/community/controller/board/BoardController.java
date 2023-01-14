@@ -37,9 +37,7 @@ public class BoardController {
     @ResponseStatus(HttpStatus.CREATED)
     public Response createBoard(@Valid @ModelAttribute BoardCreateRequest req,
                            @RequestParam(value = "category", defaultValue = "1") int categoryId) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUsername(authentication.getName()).orElseThrow(MemberNotFoundException::new);
-
+        User user = getPrincipal();
         return Response.success(boardService.createBoard(req, categoryId, user));
     }
 
@@ -57,14 +55,12 @@ public class BoardController {
         return Response.success(boardService.findBoard(id));
     }
 
-    @ApiOperation(value = "게시글 수정")
+    @ApiOperation(value = "게시글 수정", notes = "게시글을 수정합니다.")
     @PutMapping("/boards/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response editBoard(@ApiParam(value = "게시글 id", required = true) @PathVariable Long id,
-                                @Valid @ModelAttribute BoardUpdateRequest req) {
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUsername(authentication.getName()).orElseThrow(MemberNotFoundException::new);
+                              @Valid @ModelAttribute BoardUpdateRequest req) {
+        User user = getPrincipal();
         return Response.success(boardService.editBoard(id, req, user));
     }
 
@@ -72,9 +68,7 @@ public class BoardController {
     @DeleteMapping("/boards/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response deleteBoard(@ApiParam(value = "게시글 id", required = true) @PathVariable Long id) {
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUsername(authentication.getName()).orElseThrow(MemberNotFoundException::new);
+        User user = getPrincipal();
         boardService.deleteBoard(id,user);
         return Response.success();
     }
@@ -93,8 +87,7 @@ public class BoardController {
     @ResponseStatus(HttpStatus.OK)
     public Response likeBoard(@ApiParam(value = "게시글 id", required = true) @PathVariable Long id) {
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUsername(authentication.getName()).orElseThrow(MemberNotFoundException::new);
+        User user = getPrincipal();
         return Response.success(boardService.updateLikeOfBoard(id,user));
     }
 
@@ -102,9 +95,7 @@ public class BoardController {
     @PostMapping("/boards/{id}/favorites")
     @ResponseStatus(HttpStatus.OK)
     public Response favoriteBoard(@ApiParam(value = "게시글 id", required = true) @PathVariable Long id) {
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUsername(authentication.getName()).orElseThrow(MemberNotFoundException::new);
+        User user = getPrincipal();
         return Response.success(boardService.updateOfFavoriteBoard(id,user));
     }
 
@@ -116,4 +107,11 @@ public class BoardController {
         return Response.success(boardService.findBestBoards(pageable));
     }
 
+    private User getPrincipal() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = userRepository.findByUsername(authentication.getName())
+                .orElseThrow(MemberNotFoundException::new);
+        return user;
+
+    }
 }
