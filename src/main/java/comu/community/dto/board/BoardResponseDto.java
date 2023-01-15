@@ -13,7 +13,6 @@ import static java.util.stream.Collectors.toList;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BoardResponseDto {
-
     private Long id;
     private String writer_nickname;
     private String title;

@@ -49,7 +49,9 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public BoardCreateResponse createBoard(BoardCreateRequest req, int categoryId, User user) {
-        List<Image> images = req.getImages().stream().map(i -> new Image(i.getOriginalFilename())).collect(toList());
+        List<Image> images = req.getImages().stream().
+                map(i -> new Image(i.getOriginalFilename()))
+                .collect(toList());
         Category category = categoryRepository.findById(categoryId).orElseThrow(CategoryNotFoundException::new);
         Board board = boardRepository.save(new Board(req.getTitle(), req.getContent(), user, category, images));
         uploadImages(board.getImages(), req.getImages());
