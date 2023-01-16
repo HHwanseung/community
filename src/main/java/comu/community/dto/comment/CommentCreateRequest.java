@@ -16,13 +16,14 @@ import javax.validation.constraints.Positive;
 @NoArgsConstructor
 public class CommentCreateRequest {
 
-    @ApiModelProperty(value = "댓글", notes = "댓글을 입력해주세요", required = true)
-    @NotBlank(message = "댓글을 입력해주세요")
-    private String content;
-
     @ApiModelProperty(value = "게시물 번호 ", notes = "게시물 번호를 입력해주세요", required = true)
     @NotNull(message = "게시물 번호를 입력해주세요")
     @Positive(message = "게시물 번호를 입력해주세요")
     private Long boardId;
+
+    @ApiModelProperty(value = "댓글", notes = "댓글을 입력해주세요", required = true)
+    @NotBlank(message = "댓글을 입력해주세요")
+    private String content;
+
 
 }

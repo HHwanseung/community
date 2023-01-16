@@ -41,6 +41,8 @@ public class SwaggerConfig {
         return new ApiInfoBuilder()
                 .title("Community")
                 .description("practice swagger config")
+                .license("dkqlch@naver.com")
+                .licenseUrl("https://github.com/hhwanseung/community")
                 .version("1.0")
                 .build();
     }

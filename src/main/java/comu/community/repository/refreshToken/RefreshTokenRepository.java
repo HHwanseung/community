@@ -1,6 +1,6 @@
 package comu.community.repository.refreshToken;
 
-import comu.community.entity.user.RefreshToken;
+import comu.community.entity.member.RefreshToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

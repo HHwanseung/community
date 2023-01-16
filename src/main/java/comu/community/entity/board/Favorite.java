@@ -1,7 +1,7 @@
 package comu.community.entity.board;
 
 import comu.community.entity.BaseTimeEntity;
-import comu.community.entity.user.User;
+import comu.community.entity.member.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,14 +30,14 @@ public class Favorite extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private User user;
+    private Member member;
 
     @Column(nullable = false)
     private boolean status; // 즐겨찾기 여부
 
-    public Favorite(Board board, User user) {
+    public Favorite(Board board, Member member) {
         this.board = board;
-        this.user = user;
+        this.member = member;
         this.status = true;
     }
 

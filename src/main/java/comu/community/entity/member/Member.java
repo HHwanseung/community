@@ -1,7 +1,7 @@
-package comu.community.entity.user;
+package comu.community.entity.member;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import comu.community.dto.user.UserEditRequestDto;
+import comu.community.dto.member.MemberEditRequestDto;
 import comu.community.entity.BaseTimeEntity;
 import lombok.*;
 
@@ -13,7 +13,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Entity
 @Builder
-public class User extends BaseTimeEntity {
+public class Member extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,7 +39,7 @@ public class User extends BaseTimeEntity {
     private boolean reported;
 
     @Builder
-    public User(String username, String password, Role role) {
+    public Member(String username, String password, Role role) {
         this.username = username;
         this.password = password;
         this.name = name;
@@ -52,7 +52,7 @@ public class User extends BaseTimeEntity {
         return this.reported;
     }
 
-    public void editUser(UserEditRequestDto req) {
+    public void editUser(MemberEditRequestDto req) {
         name = req.getName();
         nickname = req.getNickname();
     }

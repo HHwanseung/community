@@ -2,15 +2,14 @@ package comu.community.service.auth;
 
 import comu.community.config.jwt.TokenProvider;
 import comu.community.dto.sign.*;
-import comu.community.entity.user.RefreshToken;
-import comu.community.entity.user.Role;
-import comu.community.entity.user.User;
+import comu.community.entity.member.RefreshToken;
+import comu.community.entity.member.Role;
+import comu.community.entity.member.Member;
 import comu.community.exception.LoginFailureException;
 import comu.community.exception.MemberNicknameAlreadyExistsException;
-import comu.community.exception.MemberUsernameAlreadyExistsException;
+import comu.community.exception.UsernameAlreadyExistsException;
 import comu.community.repository.refreshToken.RefreshTokenRepository;
-import comu.community.repository.user.UserRepository;
-import comu.community.service.redis.RedisService;
+import comu.community.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -23,28 +22,26 @@ import org.springframework.stereotype.Service;
 public class AuthServiceImpl implements AuthService {
 
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
 
-    private final RedisService redisService;
-
     @Override
     public void signup(SignUpRequestDto req) {
         validateSignUpInfo(req);
-        User user = createSignupFormOfUser(req);
-        userRepository.save(user);
+        Member member = createSignupFormOfUser(req);
+        memberRepository.save(member);
 
     }
 
     @Override
     public TokenResponseDto signIn(LoginRequestDto req) {
-        User user = userRepository.findByUsername(req.getUsername()).orElseThrow(() -> {
+        Member member = memberRepository.findByUsername(req.getUsername()).orElseThrow(() -> {
             throw new LoginFailureException();
         });
 
-        validatePassword(req, user);
+        validatePassword(req, member);
         Authentication authentication = getUserAuthentication(req);
         TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
         RefreshToken refreshToken = buildRefreshToken(authentication, tokenDto);
@@ -81,27 +78,29 @@ public class AuthServiceImpl implements AuthService {
         TokenResponseDto tokenResponseDto = new TokenResponseDto(tokenDto.getAccessToken(), tokenDto.getRefreshToken());
         return tokenResponseDto;
     }
-//
-    private User createSignupFormOfUser(SignUpRequestDto req) {
-        User user = User.builder()
+
+    private Member createSignupFormOfUser(SignUpRequestDto req) {
+        Member member = Member.builder()
                 .username(req.getUsername())
                 .password(passwordEncoder.encode(req.getPassword()))
                 .nickname(req.getNickname())
                 .name(req.getName())
                 .role(Role.ROLE_USER)
                 .build();
-        return user;
+        return member;
     }
 
     private void validateSignUpInfo(SignUpRequestDto signUpRequestDto) {
-        if (userRepository.existsByUsername(signUpRequestDto.getUsername()))
-            throw new MemberUsernameAlreadyExistsException(signUpRequestDto.getUsername());
-        if (userRepository.existsByNickname(signUpRequestDto.getNickname()))
+        if (memberRepository.existsByUsername(signUpRequestDto.getUsername())) {
+            throw new UsernameAlreadyExistsException(signUpRequestDto.getUsername());
+        }
+        if (memberRepository.existsByNickname(signUpRequestDto.getNickname())) {
             throw new MemberNicknameAlreadyExistsException(signUpRequestDto.getNickname());
+        }
     }
 
-    private void validatePassword(LoginRequestDto loginRequestDto, User user) {
-        if (!passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())) {
+    private void validatePassword(LoginRequestDto loginRequestDto, Member member) {
+        if (!passwordEncoder.matches(loginRequestDto.getPassword(), member.getPassword())) {
             throw new LoginFailureException();
         }
     }

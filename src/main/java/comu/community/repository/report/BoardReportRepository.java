@@ -7,7 +7,8 @@ import java.util.List;
 
 public interface BoardReportRepository extends JpaRepository<BoardReportHistory, Long> {
 
-    BoardReportHistory findByReporterIdAndReportedBoardId(Long reporterId, Long reportedBoardId);
+    boolean existsByReporterIdAndReportedBoardId(Long reporterId, Long reportedBoardId);
+
     List<BoardReportHistory> findByReportedBoardId(Long reportedBoardId);
 
     void deleteAllByReportedBoardId(Long id);

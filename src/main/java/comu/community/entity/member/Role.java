@@ -1,4 +1,4 @@
-package comu.community.entity.user;
+package comu.community.entity.member;
 
 public enum Role {
 

@@ -3,7 +3,7 @@ package comu.community.entity.board;
 import comu.community.dto.board.BoardUpdateRequest;
 import comu.community.entity.BaseTimeEntity;
 import comu.community.entity.category.Category;
-import comu.community.entity.user.User;
+import comu.community.entity.member.Member;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -38,7 +38,7 @@ public class Board extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private User user;
+    private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
@@ -58,10 +58,10 @@ public class Board extends BaseTimeEntity {
     private boolean reported;
 
 
-    public Board(String title, String content, User user, Category category, List<Image> images) {
+    public Board(String title, String content, Member member, Category category, List<Image> images) {
         this.title = title;
         this.content = content;
-        this.user = user;
+        this.member = member;
         this.liked = 0;
         this.favorited = 0;
         this.reported = false;

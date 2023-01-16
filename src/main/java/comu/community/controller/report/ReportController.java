@@ -1,13 +1,12 @@
 package comu.community.controller.report;
 
 import comu.community.dto.report.BoardReportRequest;
-import comu.community.dto.report.UserReportRequest;
-import comu.community.entity.user.User;
+import comu.community.dto.report.MemberReportRequestDto;
+import comu.community.entity.member.Member;
 import comu.community.exception.MemberNotFoundException;
-import comu.community.repository.user.UserRepository;
+import comu.community.repository.member.MemberRepository;
 import comu.community.response.Response;
 import comu.community.service.report.ReportService;
-import comu.community.service.user.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -25,23 +24,28 @@ import javax.validation.Valid;
 public class ReportController {
 
     private final ReportService reportService;
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
 
     @ApiOperation(value = "유저 신고", notes = "유저를 신고합니다")
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/reports/users")
-    public Response reportUser(@Valid @RequestBody UserReportRequest userReportRequest) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUsername(authentication.getName()).orElseThrow(MemberNotFoundException::new);
-        return Response.success(reportService.reportUser(user, userReportRequest));
+    public Response reportUser(@Valid @RequestBody MemberReportRequestDto userReportRequest) {
+        Member member = getPrincipal();
+        return Response.success(reportService.reportUser(member, userReportRequest));
     }
 
     @ApiOperation(value = "게시글 신고", notes = "게시글을 신고합니다")
     @ResponseStatus(HttpStatus.OK)
     @PostMapping("/reports/boards")
     public Response reportBoard(@Valid @RequestBody BoardReportRequest boardReportRequest){
+        Member member = getPrincipal();
+        return Response.success(reportService.reportBoard(member, boardReportRequest));
+    }
+
+    private Member getPrincipal() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUsername(authentication.getName()).orElseThrow(MemberNotFoundException::new);
-        return Response.success(reportService.reportBoard(user, boardReportRequest));
+        Member member = memberRepository.findByUsername(authentication.getName())
+                .orElseThrow(MemberNotFoundException::new);
+        return member;
     }
 }

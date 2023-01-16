@@ -1,20 +1,19 @@
 package comu.community.service.admin;
 
 import comu.community.dto.board.BoardSimpleDto;
-import comu.community.dto.user.UserEditRequestDto;
+import comu.community.dto.member.MemberEditRequestDto;
 import comu.community.entity.board.Board;
-import comu.community.entity.user.User;
+import comu.community.entity.member.Member;
 import comu.community.exception.BoardNotFoundException;
 import comu.community.exception.MemberNotEqualsException;
 import comu.community.exception.NotReportedException;
 import comu.community.repository.board.BoardRepository;
 import comu.community.repository.report.BoardReportRepository;
-import comu.community.repository.report.UserReportRepository;
-import comu.community.repository.user.UserRepository;
+import comu.community.repository.report.MemberReportRepository;
+import comu.community.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,37 +21,37 @@ import java.util.stream.Collectors;
 @Service
 public class AdminServiceImpl implements AdminService {
 
-    private final UserRepository userRepository;
-    private final UserReportRepository userReportRepository;
+    private final MemberRepository memberRepository;
+    private final MemberReportRepository memberReportRepository;
     private final BoardRepository boardRepository;
     private final BoardReportRepository boardReportRepository;
 
     @Override
-    public List<UserEditRequestDto> findReportedUsers() {
-        List<User> users = userRepository.findByReportedIsTrue();
-        List<UserEditRequestDto> usersDto = users.stream()
-                .map(user -> new UserEditRequestDto().toDto(user))
+    public List<MemberEditRequestDto> findReportedUsers() {
+        List<Member> members = memberRepository.findByReportedIsTrue();
+        List<MemberEditRequestDto> usersDto = members.stream()
+                .map(user -> new MemberEditRequestDto().toDto(user))
                 .collect(Collectors.toList());
         return usersDto;
     }
 
     @Override
-    public UserEditRequestDto processUnlockUser(Long id) {
-        User user = userRepository.findById(id).orElseThrow(MemberNotEqualsException::new);
-        validateUnlockUser(user);
-        deleteUnlockUser(user, id);
-        return UserEditRequestDto.toDto(user);
+    public MemberEditRequestDto processUnlockUser(Long id) {
+        Member member = memberRepository.findById(id).orElseThrow(MemberNotEqualsException::new);
+        validateUnlockUser(member);
+        deleteUnlockUser(member, id);
+        return MemberEditRequestDto.toDto(member);
     }
 
-    private void validateUnlockUser(User user) {
-        if (!user.isReported()) {
+    private void validateUnlockUser(Member member) {
+        if (!member.isReported()) {
             throw new NotReportedException();
         }
     }
 
-    private void deleteUnlockUser(User user, Long id) {
-        user.unlockReport();
-        userReportRepository.deleteAllByReportedUserId(id);
+    private void deleteUnlockUser(Member member, Long id) {
+        member.unlockReport();
+        memberReportRepository.deleteAllByReportedUserId(id);
     }
 
     @Override

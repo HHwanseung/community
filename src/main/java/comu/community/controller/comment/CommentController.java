@@ -2,9 +2,9 @@ package comu.community.controller.comment;
 
 import comu.community.dto.comment.CommentCreateRequest;
 import comu.community.dto.comment.CommentReadCondition;
-import comu.community.entity.user.User;
+import comu.community.entity.member.Member;
 import comu.community.exception.MemberNotFoundException;
-import comu.community.repository.user.UserRepository;
+import comu.community.repository.member.MemberRepository;
 import comu.community.response.Response;
 import comu.community.service.comment.CommentService;
 import io.swagger.annotations.Api;
@@ -24,7 +24,7 @@ import javax.validation.Valid;
 @RequestMapping("/api")
 public class CommentController {
     private final CommentService commentService;
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
 
     @ApiOperation(value = "댓글 목록 조회")
     @GetMapping("/comments")
@@ -37,9 +37,8 @@ public class CommentController {
     @PostMapping("/comments")
     @ResponseStatus(HttpStatus.CREATED)
     public Response create(@Valid @RequestBody CommentCreateRequest req) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUsername(authentication.getName()).orElseThrow(MemberNotFoundException::new);
-        return Response.success(commentService.createComment(req, user));
+        Member member = getPrincipal();
+        return Response.success(commentService.createComment(req, member));
     }
 
     @ApiOperation(value = "댓글 삭제")
@@ -47,11 +46,16 @@ public class CommentController {
     @ResponseStatus(HttpStatus.OK)
     public Response delete(@ApiParam(value = "댓글 id", required = true) @PathVariable Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUsername(authentication.getName()).orElseThrow(MemberNotFoundException::new);
-        commentService.deleteComment(id, user);
+        Member member = memberRepository.findByUsername(authentication.getName()).orElseThrow(MemberNotFoundException::new);
+        commentService.deleteComment(id, member);
         return Response.success();
     }
 
-
+    public Member getPrincipal() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Member member = memberRepository.findByUsername(authentication.getName())
+                .orElseThrow(MemberNotFoundException::new);
+        return member;
+    }
 
 }

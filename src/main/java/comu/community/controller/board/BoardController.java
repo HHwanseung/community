@@ -1,12 +1,5 @@
 package comu.community.controller.board;
 
-import comu.community.dto.board.BoardCreateRequest;
-import comu.community.dto.board.BoardUpdateRequest;
-import comu.community.entity.user.User;
-import comu.community.exception.MemberNotFoundException;
-import comu.community.repository.user.UserRepository;
-import comu.community.response.Response;
-import comu.community.service.board.BoardService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -19,6 +12,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import comu.community.dto.board.BoardCreateRequest;
+import comu.community.dto.board.BoardUpdateRequest;
+import comu.community.entity.member.Member;
+import comu.community.exception.MemberNotFoundException;
+import comu.community.repository.member.MemberRepository;
+import comu.community.response.Response;
+import comu.community.service.board.BoardService;
 
 import javax.validation.Valid;
 
@@ -30,15 +30,15 @@ import javax.validation.Valid;
 public class BoardController {
 
     private final BoardService boardService;
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
 
     @ApiOperation(value = "게시글 생성")
     @PostMapping("/boards")
     @ResponseStatus(HttpStatus.CREATED)
     public Response createBoard(@Valid @ModelAttribute BoardCreateRequest req,
                            @RequestParam(value = "category", defaultValue = "1") int categoryId) {
-        User user = getPrincipal();
-        return Response.success(boardService.createBoard(req, categoryId, user));
+        Member member = getPrincipal();
+        return Response.success(boardService.createBoard(req, categoryId, member));
     }
 
     @ApiOperation(value = "게시글 목록 조회", notes = "게시글 목록을 조회합니다.")
@@ -60,16 +60,16 @@ public class BoardController {
     @ResponseStatus(HttpStatus.OK)
     public Response editBoard(@ApiParam(value = "게시글 id", required = true) @PathVariable Long id,
                               @Valid @ModelAttribute BoardUpdateRequest req) {
-        User user = getPrincipal();
-        return Response.success(boardService.editBoard(id, req, user));
+        Member member = getPrincipal();
+        return Response.success(boardService.editBoard(id, req, member));
     }
 
     @ApiOperation(value = "게시글 삭제")
     @DeleteMapping("/boards/{id}")
     @ResponseStatus(HttpStatus.OK)
     public Response deleteBoard(@ApiParam(value = "게시글 id", required = true) @PathVariable Long id) {
-        User user = getPrincipal();
-        boardService.deleteBoard(id,user);
+        Member member = getPrincipal();
+        boardService.deleteBoard(id, member);
         return Response.success();
     }
 
@@ -87,16 +87,16 @@ public class BoardController {
     @ResponseStatus(HttpStatus.OK)
     public Response likeBoard(@ApiParam(value = "게시글 id", required = true) @PathVariable Long id) {
 
-        User user = getPrincipal();
-        return Response.success(boardService.updateLikeOfBoard(id,user));
+        Member member = getPrincipal();
+        return Response.success(boardService.updateLikeOfBoard(id, member));
     }
 
     @ApiOperation(value = "게시글 즐겨찾기")
     @PostMapping("/boards/{id}/favorites")
     @ResponseStatus(HttpStatus.OK)
     public Response favoriteBoard(@ApiParam(value = "게시글 id", required = true) @PathVariable Long id) {
-        User user = getPrincipal();
-        return Response.success(boardService.updateOfFavoriteBoard(id,user));
+        Member member = getPrincipal();
+        return Response.success(boardService.updateOfFavoriteBoard(id, member));
     }
 
     @ApiOperation(value = "인기글 조회")
@@ -107,11 +107,11 @@ public class BoardController {
         return Response.success(boardService.findBestBoards(pageable));
     }
 
-    private User getPrincipal() {
+    private Member getPrincipal() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userRepository.findByUsername(authentication.getName())
+        Member member = memberRepository.findByUsername(authentication.getName())
                 .orElseThrow(MemberNotFoundException::new);
-        return user;
+        return member;
 
     }
 }

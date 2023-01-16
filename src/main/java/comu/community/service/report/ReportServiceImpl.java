@@ -2,58 +2,58 @@ package comu.community.service.report;
 
 import comu.community.dto.report.BoardReportRequest;
 import comu.community.dto.report.BoardReportResponse;
-import comu.community.dto.report.UserReportRequest;
-import comu.community.dto.report.UserReportResponse;
-import comu.community.dto.user.UserEditRequestDto;
+import comu.community.dto.report.MemberReportRequestDto;
+import comu.community.dto.report.MemberReportResponseDto;
+import comu.community.dto.member.MemberEditRequestDto;
 import comu.community.entity.board.Board;
 import comu.community.entity.report.BoardReportHistory;
-import comu.community.entity.report.UserReportHistory;
-import comu.community.entity.user.User;
+import comu.community.entity.report.MemberReportHistory;
+import comu.community.entity.member.Member;
 import comu.community.exception.AlreadyReportException;
 import comu.community.exception.BoardNotFoundException;
 import comu.community.exception.MemberNotFoundException;
 import comu.community.exception.NotSelfReportException;
 import comu.community.repository.board.BoardRepository;
 import comu.community.repository.report.BoardReportRepository;
-import comu.community.repository.report.UserReportRepository;
-import comu.community.repository.user.UserRepository;
+import comu.community.repository.report.MemberReportRepository;
+import comu.community.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class ReportServiceImpl implements ReportService{
-    private final static long NORMAL_USER_REPORT_LIMIT_FOR_BEING_REPORTED = 1;
-    private final static long NORMAL_BOARD_REPORT_LIMIT_FOR_BEING_REPORTED = 10L;
-    private final UserReportRepository userReportHistoryRepository;
+    private final static int NORMAL_USER_REPORT_LIMIT_FOR_BEING_REPORTED = 1;
+    private final static int NORMAL_BOARD_REPORT_LIMIT_FOR_BEING_REPORTED = 10;
+    private final MemberReportRepository userReportHistoryRepository;
     private final BoardReportRepository boardReportHistoryRepository;
-    private final UserRepository userRepository;
+    private final MemberRepository memberRepository;
     private final BoardRepository boardRepository;
 
 
     @Override
-    public UserReportResponse reportUser(User reporter, UserReportRequest req) {
+    public MemberReportResponseDto reportUser(Member reporter, MemberReportRequestDto req) {
         validateUserReportRequest(reporter, req);
-        User reportedUser = userRepository.findById(req.getReportedUserId()).orElseThrow(MemberNotFoundException::new);
-        UserReportHistory userReportHistory = createUserReportHistory(reporter, reportedUser, req);
-        checkUserStatusIsBeingReported(reportedUser, req);
-        return new UserReportResponse(userReportHistory.getId(), UserEditRequestDto.toDto(reportedUser),
+        Member reportedMember = memberRepository.findById(req.getReportedUserId()).orElseThrow(MemberNotFoundException::new);
+        MemberReportHistory memberReportHistory = createUserReportHistory(reporter, reportedMember, req);
+        checkUserStatusIsBeingReported(reportedMember, req);
+        return new MemberReportResponseDto(memberReportHistory.getId(), MemberEditRequestDto.toDto(reportedMember),
                 req.getContent());
     }
 
-    private void checkUserStatusIsBeingReported(User reportedUser, UserReportRequest req) {
+    private void checkUserStatusIsBeingReported(Member reportedMember, MemberReportRequestDto req) {
         if (userReportHistoryRepository.findByReportedUserId(req.getReportedUserId()).size() >= NORMAL_USER_REPORT_LIMIT_FOR_BEING_REPORTED) {
-            reportedUser.setStatusIsBeingReported();
+            reportedMember.setStatusIsBeingReported();
         }
     }
 
-    private UserReportHistory createUserReportHistory(User reporter, User reportedUser, UserReportRequest req) {
-        UserReportHistory userReportHistory = new UserReportHistory(reporter.getId(), reportedUser.getId(), req.getContent());
-        userReportHistoryRepository.save(userReportHistory);
-        return userReportHistory;
+    private MemberReportHistory createUserReportHistory(Member reporter, Member reportedMember, MemberReportRequestDto req) {
+        MemberReportHistory memberReportHistory = new MemberReportHistory(reporter.getId(), reportedMember.getId(), req.getContent());
+        userReportHistoryRepository.save(memberReportHistory);
+        return memberReportHistory;
     }
 
-    private void validateUserReportRequest(User reporter, UserReportRequest req) {
+    private void validateUserReportRequest(Member reporter, MemberReportRequestDto req) {
         if (reporter.isReportMySelf(req.getReportedUserId())) {
             throw new NotSelfReportException();
         }
@@ -65,27 +65,35 @@ public class ReportServiceImpl implements ReportService{
     }
 
     @Override
-    public BoardReportResponse reportBoard(User reporter, BoardReportRequest req) {
+    public BoardReportResponse reportBoard(Member reporter, BoardReportRequest req) {
         Board reportedBoard = boardRepository.findById(req.getReportedBoardId()).orElseThrow(BoardNotFoundException::new);
+        validateBoard(reporter, reportedBoard, req);
+        BoardReportHistory boardReportHistory = createBoardReportHistory(reporter, reportedBoard, req);
+        checkBoardStatusIsBeingReported(reportedBoard, req);
+        return new BoardReportResponse(boardReportHistory.getId(), req.getReportedBoardId(),
+                req.getContent());
+    }
 
-        if (reporter.getId() == reportedBoard.getUser().getId()){
+    private void checkBoardStatusIsBeingReported(Board reportedBoard, BoardReportRequest req) {
+        if (boardReportHistoryRepository.findByReportedBoardId(req.getReportedBoardId()).size()
+                >= NORMAL_BOARD_REPORT_LIMIT_FOR_BEING_REPORTED) {
+            reportedBoard.setStatusIsBeingReported();
+        }
+    }
+
+    private BoardReportHistory createBoardReportHistory(Member reporter, Board reportedBoard, BoardReportRequest req) {
+        BoardReportHistory boardReportHistory = new BoardReportHistory(reporter.getId(), reportedBoard.getId(), req.getContent());
+        boardReportHistoryRepository.save(boardReportHistory);
+        return boardReportHistory;
+    }
+
+    private void validateBoard(Member reporter, Board reportedBoard, BoardReportRequest req) {
+        if (reporter.isReportMySelf(reportedBoard.getMember().getId())) {
             throw new NotSelfReportException();
         }
 
-        if (boardReportHistoryRepository.findByReporterIdAndReportedBoardId(reporter.getId(), req.getReportedBoardId()) == null) {
-            // 신고 한 적이 없다면, 테이블 생성 후 신고 처리
-            BoardReportHistory boardReport = new BoardReportHistory(reporter.getId(), reportedBoard.getId(), req.getContent());
-            boardReportHistoryRepository.save(boardReport);
-
-            if (boardReportHistoryRepository.findByReportedBoardId(req.getReportedBoardId()).size() >= 10) {
-                reportedBoard.setReported(true);
-            }
-
-            BoardReportResponse res = new BoardReportResponse(boardReport.getId(), req.getReportedBoardId(), req.getContent());
-            return res;
-        } else {
+        if (boardReportHistoryRepository.existsByReporterIdAndReportedBoardId(reporter.getId(), req.getReportedBoardId())) {
             throw new AlreadyReportException();
         }
-
     }
 }

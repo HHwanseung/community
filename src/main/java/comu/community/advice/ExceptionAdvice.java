@@ -177,7 +177,7 @@ public class ExceptionAdvice {
     // username 중복
     @ExceptionHandler(UsernameAlreadyExistsException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
-    public Response memberUsernameAlreadyExistException (MemberNicknameAlreadyExistsException e){
+    public Response memberEmailAlreadyExistsException(MemberNicknameAlreadyExistsException e){
         return Response.failure(409, e.getMessage() + "은 중복된 아이디 입니다.");
     }
 

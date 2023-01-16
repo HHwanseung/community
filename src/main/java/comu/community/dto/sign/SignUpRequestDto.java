@@ -1,5 +1,6 @@
 package comu.community.dto.sign;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -9,7 +10,7 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-@ApiOperation(value = "회원가입 요청")
+@ApiModel(value = "회원가입 요청")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

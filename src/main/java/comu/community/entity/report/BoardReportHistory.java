@@ -5,9 +5,10 @@ import lombok.*;
 
 import javax.persistence.*;
 
-@Data
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
+@Setter
 @Entity
 public class BoardReportHistory extends BaseTimeEntity {
 

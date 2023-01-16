@@ -11,15 +11,14 @@ import lombok.NoArgsConstructor;
 public class BoardReportResponse {
 
     private Long id;
-    private Long reportBoardId;
+    private Long reportedBoardId;
     private String content;
 
-    public BoardReportResponse toDto(BoardReportHistory boardReport) {
-
+    public BoardReportResponse toDto(BoardReportHistory boardReportHistory) {
         return new BoardReportResponse(
-                boardReport.getId(),
-                boardReport.getReportedBoardId(),
-                boardReport.getContent()
+                boardReportHistory.getId(),
+                boardReportHistory.getReportedBoardId(),
+                boardReportHistory.getContent()
         );
     }
 

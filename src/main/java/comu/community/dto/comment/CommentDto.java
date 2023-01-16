@@ -1,7 +1,7 @@
 package comu.community.dto.comment;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import comu.community.dto.user.UserEditRequestDto;
+import comu.community.dto.member.MemberEditRequestDto;
 import comu.community.entity.comment.Comment;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,13 +15,13 @@ public class CommentDto {
 
     private Long id;
     private String content;
-    private UserEditRequestDto usereditRequestDto;
+    private MemberEditRequestDto memberEditRequestDto;
 
     public CommentDto toDto(Comment comment) {
         return new CommentDto(
                 comment.getId(),
                 comment.getContent(),
-                UserEditRequestDto.toDto(comment.getUser())
+                MemberEditRequestDto.toDto(comment.getMember())
         );
     }
 }

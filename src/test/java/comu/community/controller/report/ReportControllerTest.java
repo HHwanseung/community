@@ -2,9 +2,9 @@ package comu.community.controller.report;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import comu.community.dto.report.BoardReportRequest;
-import comu.community.dto.report.UserReportRequest;
-import comu.community.entity.user.User;
-import comu.community.repository.user.UserRepository;
+import comu.community.dto.report.MemberReportRequestDto;
+import comu.community.entity.member.Member;
+import comu.community.repository.member.MemberRepository;
 import comu.community.service.report.ReportService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,8 +24,6 @@ import java.util.Collections;
 import java.util.Optional;
 
 import static comu.community.factory.UserFactory.createUserWithAdminRole;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.startsWith;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -41,7 +39,7 @@ class ReportControllerTest {
     ReportService reportService;
 
     @Mock
-    UserRepository userRepository;
+    MemberRepository memberRepository;
 
     MockMvc mockMvc;
     ObjectMapper objectMapper = new ObjectMapper();
@@ -55,12 +53,12 @@ class ReportControllerTest {
     @DisplayName("유저 신고 하기")
     public  void  reportUserTest() throws Exception {
         // given
-        UserReportRequest req = new UserReportRequest(1L, "내용");
+        MemberReportRequestDto req = new MemberReportRequestDto(1L, "내용");
 
-        User user = createUserWithAdminRole();
-        Authentication authentication = new UsernamePasswordAuthenticationToken(user.getId(), "", Collections.emptyList());
+        Member member = createUserWithAdminRole();
+        Authentication authentication = new UsernamePasswordAuthenticationToken(member.getId(), "", Collections.emptyList());
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        given(userRepository.findByUsername(authentication.getName())).willReturn(Optional.of(user));
+        given(memberRepository.findByUsername(authentication.getName())).willReturn(Optional.of(member));
 
         // when, then
         mockMvc.perform(
@@ -69,7 +67,7 @@ class ReportControllerTest {
                         .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isOk());
 
-        verify(reportService).reportUser(user, req);
+        verify(reportService).reportUser(member, req);
     }
 
     @Test
@@ -78,11 +76,11 @@ class ReportControllerTest {
         //given
         BoardReportRequest req = new BoardReportRequest(1L, "내용");
 
-        User user = createUserWithAdminRole();
-        Authentication authentication = new UsernamePasswordAuthenticationToken(user.getId(), "", Collections.emptyList());
+        Member member = createUserWithAdminRole();
+        Authentication authentication = new UsernamePasswordAuthenticationToken(member.getId(), "", Collections.emptyList());
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        given(userRepository.findByUsername(authentication.getName())).willReturn(Optional.of(user));
+        given(memberRepository.findByUsername(authentication.getName())).willReturn(Optional.of(member));
 
         // when, then
         mockMvc.perform(
@@ -91,7 +89,7 @@ class ReportControllerTest {
                         .content(objectMapper.writeValueAsString(req)))
                 .andExpect(status().isOk());
 
-        verify(reportService).reportBoard(user, req);
+        verify(reportService).reportBoard(member, req);
     }
 
 }

@@ -1,18 +1,16 @@
 package comu.community.entity.report;
 
 import comu.community.entity.BaseTimeEntity;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
-@Data
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
+@Setter
 @Entity
-public class UserReportHistory extends BaseTimeEntity {
+public class MemberReportHistory extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +25,7 @@ public class UserReportHistory extends BaseTimeEntity {
     @Column(nullable = false)
     private String content;
 
-    public UserReportHistory(Long reporterId, Long reportedUserId, String content) {
+    public MemberReportHistory(Long reporterId, Long reportedUserId, String content) {
         this.reporterId = reporterId;
         this.reportedUserId = reportedUserId;
         this.content = content;

@@ -1,4 +1,4 @@
-package comu.community.entity.user;
+package comu.community.entity.member;
 
 import lombok.Builder;
 import lombok.Getter;

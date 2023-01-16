@@ -5,18 +5,16 @@ import comu.community.dto.comment.CommentDto;
 import comu.community.dto.comment.CommentReadCondition;
 import comu.community.entity.board.Board;
 import comu.community.entity.comment.Comment;
-import comu.community.entity.user.User;
+import comu.community.entity.member.Member;
 import comu.community.exception.BoardNotFoundException;
 import comu.community.exception.CommentNotFoundException;
 import comu.community.exception.MemberNotEqualsException;
 import comu.community.repository.board.BoardRepository;
 import comu.community.repository.commnet.CommentRepository;
-import comu.community.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,23 +36,23 @@ public class CommentServiceImpl implements CommentService{
     }
 
     @Override
-    public CommentDto createComment(CommentCreateRequest req, User user) {
+    public CommentDto createComment(CommentCreateRequest req, Member member) {
         Board board = boardRepository.findById(req.getBoardId()).orElseThrow(BoardNotFoundException::new);
-        Comment comment = new Comment(req.getContent(), user, board);
+        Comment comment = new Comment(req.getContent(), member, board);
         commentRepository.save(comment);
         return new CommentDto().toDto(comment);
     }
 
     @Override
-    public void deleteComment(Long id, User user) {
+    public void deleteComment(Long id, Member member) {
         Comment comment = commentRepository.findById(id).orElseThrow(CommentNotFoundException::new);
-        validateDeleteComment(comment, user);
+        validateDeleteComment(comment, member);
         commentRepository.delete(comment);
     }
 
     @Override
-    public void validateDeleteComment(Comment comment, User user) {
-        if (!comment.isOwnComment(user)) {
+    public void validateDeleteComment(Comment comment, Member member) {
+        if (!comment.isOwnComment(member)) {
             throw new MemberNotEqualsException();
         }
     }

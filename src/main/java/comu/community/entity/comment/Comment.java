@@ -2,7 +2,7 @@ package comu.community.entity.comment;
 
 import comu.community.entity.BaseTimeEntity;
 import comu.community.entity.board.Board;
-import comu.community.entity.user.User;
+import comu.community.entity.member.Member;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -27,21 +27,21 @@ public class Comment extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    private User user;
+    private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Board board;
 
-    public Comment(String content, User user, Board board) {
+    public Comment(String content, Member member, Board board) {
         this.content = content;
-        this.user = user;
+        this.member = member;
         this.board = board;
     }
 
-    public boolean isOwnComment(User user) {
-        return this.user.equals(user);
+    public boolean isOwnComment(Member member) {
+        return this.member.equals(member);
     }
 
 }
