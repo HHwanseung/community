@@ -22,6 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ import static java.util.stream.Collectors.toList;
 
 @RequiredArgsConstructor
 @Service
+@Transactional
 public class BoardServiceImpl implements BoardService {
 
     private final static String SUCCESS_LIKE_BOARD = "좋아요 처리 완료";

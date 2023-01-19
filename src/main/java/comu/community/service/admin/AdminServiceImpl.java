@@ -13,12 +13,14 @@ import comu.community.repository.report.MemberReportRepository;
 import comu.community.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
+@Transactional
 public class AdminServiceImpl implements AdminService {
 
     private final MemberRepository memberRepository;

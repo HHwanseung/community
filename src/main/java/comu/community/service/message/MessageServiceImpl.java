@@ -11,6 +11,7 @@ import comu.community.repository.message.MessageRepository;
 import comu.community.repository.member.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
+@Transactional
 public class MessageServiceImpl implements MessageService {
 
     private final MessageRepository messageRepository;

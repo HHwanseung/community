@@ -7,6 +7,7 @@ import comu.community.exception.CategoryNotFoundException;
 import comu.community.repository.category.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
+@Transactional
 public class CategoryServiceImpl implements CategoryService {
 
     private final static String DEFAULT_CATEGORY = "Default";

@@ -2,15 +2,14 @@ package comu.community.entity.message;
 
 import comu.community.entity.BaseTimeEntity;
 import comu.community.entity.member.Member;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Message extends BaseTimeEntity {
