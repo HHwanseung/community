@@ -1,7 +1,7 @@
 package comu.community.dto.sign;
 
-import comu.community.entity.user.Role;
-import comu.community.entity.user.User;
+import comu.community.entity.member.Role;
+import comu.community.entity.member.Member;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -26,8 +26,8 @@ public class LoginRequestDto {
     @NotBlank(message = "{LoginRequestDto.password.notBlank}")
     private String password;
 
-    public User toMember(PasswordEncoder passwordEncoder) {
-        return User.builder()
+    public Member toMember(PasswordEncoder passwordEncoder) {
+        return Member.builder()
                 .username(username)
                 .password(passwordEncoder.encode(password))
                 .role(Role.ROLE_USER)
