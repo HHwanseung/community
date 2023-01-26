@@ -13,7 +13,7 @@ import java.io.File;
 import java.io.IOException;
 
 @Service
-@PropertySource("classpath:secure.propoerties")
+@PropertySource("classpath:application.yml")
 public class LocalFileService implements FileService{
 
     @Value("${upload.image.location}")
