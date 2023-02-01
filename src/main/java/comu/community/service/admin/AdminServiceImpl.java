@@ -2,6 +2,7 @@ package comu.community.service.admin;
 
 import comu.community.dto.board.BoardSimpleDto;
 import comu.community.dto.member.MemberEditRequestDto;
+import comu.community.dto.member.MemberSimpleNicknameResponseDto;
 import comu.community.entity.board.Board;
 import comu.community.entity.member.Member;
 import comu.community.exception.BoardNotFoundException;
@@ -29,20 +30,20 @@ public class AdminServiceImpl implements AdminService {
     private final BoardReportRepository boardReportRepository;
 
     @Override
-    public List<MemberEditRequestDto> findReportedUsers() {
+    public List<MemberSimpleNicknameResponseDto> findReportedUsers() {
         List<Member> members = memberRepository.findByReportedIsTrue();
-        List<MemberEditRequestDto> usersDto = members.stream()
-                .map(user -> new MemberEditRequestDto().toDto(user))
+        List<MemberSimpleNicknameResponseDto> usersDto = members.stream()
+                .map(user -> new MemberSimpleNicknameResponseDto().toDto(user))
                 .collect(Collectors.toList());
         return usersDto;
     }
 
     @Override
-    public MemberEditRequestDto processUnlockUser(Long id) {
+    public MemberSimpleNicknameResponseDto processUnlockUser(Long id) {
         Member member = memberRepository.findById(id).orElseThrow(MemberNotEqualsException::new);
         validateUnlockUser(member);
         deleteUnlockUser(member, id);
-        return MemberEditRequestDto.toDto(member);
+        return MemberSimpleNicknameResponseDto.toDto(member);
     }
 
     private void validateUnlockUser(Member member) {
