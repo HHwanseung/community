@@ -15,6 +15,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+
+import java.util.List;
 
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -36,7 +39,16 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable()
+        http.csrf().disable();
+        http.cors().configurationSource(request -> {
+            var cors = new CorsConfiguration();
+            cors.setAllowedOrigins(List.of("https://633ec6989ec820004a30086c--cheery-kheer-fe145b.netlify.app/"));
+            cors.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
+            cors.setAllowedHeaders(List.of("*"));
+            return cors;
+        });
+
+        http
                 // exception handling 할 때 우리가 만든 클래스를 추가
                 .exceptionHandling()
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
