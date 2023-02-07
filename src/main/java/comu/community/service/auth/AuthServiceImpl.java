@@ -1,17 +1,21 @@
 package comu.community.service.auth;
 
+import comu.community.config.constant.Constant;
 import comu.community.config.jwt.TokenProvider;
 import comu.community.dto.sign.*;
 import comu.community.entity.member.RefreshToken;
 import comu.community.entity.member.Role;
 import comu.community.entity.member.Member;
+import comu.community.entity.point.Point;
 import comu.community.exception.LoginFailureException;
 import comu.community.exception.MemberNicknameAlreadyExistsException;
 import comu.community.exception.UsernameAlreadyExistsException;
+import comu.community.repository.Point.PointRepository;
 import comu.community.repository.refreshToken.RefreshTokenRepository;
 import comu.community.repository.member.MemberRepository;
 import comu.community.service.redis.RedisService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -24,25 +28,31 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Transactional
 public class AuthServiceImpl implements AuthService {
-
+    private final static String RANKING_KEY = Constant.REDIS_RANKING_KEY;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
     private final RedisService redisService;
+    private final PointRepository pointRepository;
+    private final RedisTemplate<String, String> redisTemplate;
 
     @Override
     public void signup(SignUpRequestDto req) {
         validateSignUpInfo(req);
         Member member = createSignupFormOfUser(req);
         memberRepository.save(member);
-
+    }
+    @Override
+    public void savePointEntity(Member member) {
+        Point point = new Point(member);
+        pointRepository.save(point);
+        redisTemplate.opsForZSet().add(RANKING_KEY, member.getUsername(), point.getPoint());
     }
 
 
-
-        @Override
+    @Override
     public TokenResponseDto signIn(LoginRequestDto req) {
         Member member = memberRepository.findByUsername(req.getUsername()).orElseThrow(() -> {
             return new LoginFailureException();
