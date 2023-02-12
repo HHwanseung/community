@@ -30,10 +30,10 @@ public class CommentServiceImpl implements CommentService{
     @Override
     public List<CommentDto> findAllComments(CommentReadCondition condition) {
         List<Comment> comments = commentRepository.findByBoardId(condition.getBoardId());
-        List<CommentDto> commentsDto = comments.stream()
+
+        return comments.stream()
                 .map(comment -> new CommentDto().toDto(comment))
                 .collect(Collectors.toList());
-        return commentsDto;
     }
 
     @Override
