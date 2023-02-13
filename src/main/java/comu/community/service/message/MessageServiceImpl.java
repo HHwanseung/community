@@ -27,9 +27,18 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public MessageDto createMessage(Member sender, MessageCreateRequestDto req) {
-        Member receiver = memberRepository.findByNickname(req.getReceiverNickname()).orElseThrow(MemberNotEqualsException::new);
-        Message message = new Message(req.getTitle(), req.getContent(), sender, receiver);
+       Member receiver = getReceiver(req);
+       Message message = getMessage(sender, req, receiver);
         return MessageDto.toDto(messageRepository.save(message));
+    }
+
+    private Member getReceiver(MessageCreateRequestDto req) {
+        return memberRepository.findByNickname(req.getReceiverNickname())
+                .orElseThrow(MemberNotFoundException::new);
+    }
+
+    private Message getMessage(Member sender, MessageCreateRequestDto req, Member receiver) {
+        return new Message(req.getTitle(), req.getContent(), sender, receiver);
     }
 
     @Override
