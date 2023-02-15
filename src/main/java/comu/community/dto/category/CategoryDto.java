@@ -1,9 +1,7 @@
 package comu.community.dto.category;
 
 import comu.community.entity.category.Category;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
