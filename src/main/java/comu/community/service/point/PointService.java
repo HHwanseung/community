@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface PointService {
 
-    PointRankingRedisResponseDto findPointRankKingWithMysql(Integer points);
+    PointRankingWithPagingResponseDto findPointRankKingWithMysql(Integer page);
     List<PointRankingRedisResponseDto> findPointsRankingWithRedis();
     void updatePoint(String username);
 
