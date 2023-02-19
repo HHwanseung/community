@@ -12,10 +12,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -23,7 +25,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class PointServiceImpl implements PointService {
 
-    private final static String RAKING_KEY = Constant.REDIS_RANKING_KEY;
+    private final static String RANKING_KEY = Constant.REDIS_RANKING_KEY;
     private final RedisTemplate redisTemplate;
     private final PointRepository pointRepository;
 
@@ -45,11 +47,17 @@ public class PointServiceImpl implements PointService {
 
     @Override
     public List<PointRankingRedisResponseDto> findPointsRankingWithRedis() {
-        return null;
+        ZSetOperations<String, String> stringStringZSetOperations = redisTemplate.opsForZSet();
+        Set<ZSetOperations.TypedTuple<String>> typedTuples = stringStringZSetOperations.reverseRangeWithScores(RANKING_KEY, 0, 10);
+        List<PointRankingRedisResponseDto> result = typedTuples.stream()
+                .map(i -> new PointRankingRedisResponseDto().toDto(i))
+                .collect(Collectors.toList());
+        return result;
     }
 
     @Override
     public void updatePoint(String username) {
-
+        ZSetOperations<String, String> zSetOperation = redisTemplate.opsForZSet();
+        zSetOperation.incrementScore(RANKING_KEY, username, 5);
     }
 }
