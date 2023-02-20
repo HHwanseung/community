@@ -163,6 +163,9 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.POST, "/api/categories/start").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
                 .antMatchers(HttpMethod.DELETE, "/api/categories/{id}").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
 
+                .antMatchers(HttpMethod.GET, "/api/points").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+                .antMatchers(HttpMethod.PUT, "/api/points/{username}").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+
                 .anyRequest().hasAnyRole("ROLE_ADMIN")
 
 
