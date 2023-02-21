@@ -3,6 +3,7 @@ package comu.community.controller.auth;
 import comu.community.dto.sign.LoginRequestDto;
 import comu.community.dto.sign.SignUpRequestDto;
 import comu.community.dto.sign.TokenRequestDto;
+import comu.community.entity.member.Member;
 import comu.community.response.Response;
 import comu.community.service.auth.AuthService;
 import io.swagger.annotations.Api;
@@ -27,7 +28,8 @@ public class AuthController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/sign-up")
     public Response register(@Valid @RequestBody SignUpRequestDto signUpRequestDto) {
-        authService.signup(signUpRequestDto);
+        Member member = authService.signup(signUpRequestDto);
+        authService.savePointEntity(member);
         return success();
     }
 

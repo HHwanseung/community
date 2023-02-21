@@ -19,7 +19,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,16 +33,17 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
-    private final RedisService redisService;
     private final PointRepository pointRepository;
     private final RedisTemplate<String, String> redisTemplate;
 
     @Override
-    public void signup(SignUpRequestDto req) {
+    public Member signup(SignUpRequestDto req) {
         validateSignUpInfo(req);
         Member member = createSignupFormOfUser(req);
         memberRepository.save(member);
+        return member;
     }
+
     @Override
     public void savePointEntity(Member member) {
         Point point = new Point(member);
@@ -55,21 +55,30 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public TokenResponseDto signIn(LoginRequestDto req) {
         Member member = memberRepository.findByUsername(req.getUsername()).orElseThrow(() -> {
-            return new LoginFailureException();
+            throw new LoginFailureException();
         });
 
         validatePassword(req, member);
-        UsernamePasswordAuthenticationToken authenticationToken = req.toAuthentication();
-
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        Authentication authentication = getUserAuthentication(req);
         TokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
+        RefreshToken refreshToken = buildRefreshToken(authentication, tokenDto);
+        refreshTokenRepository.save(refreshToken);
+        return new TokenResponseDto(tokenDto.getAccessToken(), tokenDto.getRefreshToken());
 
-        redisService.setValues(authentication.getName(), tokenDto.getRefreshToken());
-        TokenResponseDto tokenResponseDto = new TokenResponseDto(tokenDto.getAccessToken(), tokenDto.getRefreshToken());
-        return tokenResponseDto;
     }
 
+    private RefreshToken buildRefreshToken(Authentication authentication, TokenDto tokenDto) {
+        return RefreshToken.builder()
+                .key(authentication.getName())
+                .value(tokenDto.getRefreshToken())
+                .build();
+    }
 
+    private Authentication getUserAuthentication(LoginRequestDto req) {
+        UsernamePasswordAuthenticationToken authenticationToken = req.toAuthentication();
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        return authentication;
+    }
 
     @Override
     public TokenResponseDto reissue(TokenRequestDto tokenRequestDto) {
