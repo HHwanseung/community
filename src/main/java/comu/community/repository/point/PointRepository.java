@@ -1,4 +1,4 @@
-package comu.community.repository.Point;
+package comu.community.repository.point;
 
 import comu.community.entity.member.Member;
 import comu.community.entity.point.Point;

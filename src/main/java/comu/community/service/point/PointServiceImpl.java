@@ -6,7 +6,7 @@ import comu.community.dto.point.PointRankingSimpleDto;
 import comu.community.dto.point.PointRankingWithPagingResponseDto;
 import comu.community.dto.point.RankingPageInfoDto;
 import comu.community.entity.point.Point;
-import comu.community.repository.Point.PointRepository;
+import comu.community.repository.point.PointRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
