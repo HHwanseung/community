@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    url: ${url}
+    username: ${username}
+    password: ${password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  redis:
+    host: ${redis.host}
+    port: ${redis.port}
+
+upload:
+  image:
+    location: ${upload.image.url}
