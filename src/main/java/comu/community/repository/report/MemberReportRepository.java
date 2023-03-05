@@ -9,6 +9,4 @@ public interface MemberReportRepository extends JpaRepository<MemberReportHistor
     boolean existsByReporterIdAndReportedUserId(Long reporterId, Long reportedUserId);
     List<MemberReportHistory> findByReportedUserId(Long reportedId);
     void deleteAllByReportedUserId(Long id);
-
-
 }

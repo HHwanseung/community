@@ -9,5 +9,4 @@ public interface BoardReportRepository extends JpaRepository<BoardReportHistory,
     boolean existsByReporterIdAndReportedBoardId(Long reporterId, Long reportedBoardId);
     List<BoardReportHistory> findByReportedBoardId(Long reportedBoardId);
     void deleteAllByReportedBoardId(Long id);
-
 }

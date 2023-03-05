@@ -13,6 +13,4 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     Page<Board> findAllByCategoryId(Pageable pageable, int categoryId);
     Page<Board> findByLikedGreaterThanEqual(Pageable pageable, int number);
     List<Board> findByReportedIsTrue();
-
-
 }
