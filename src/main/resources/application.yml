@@ -3,7 +3,8 @@ server:
 
 spring:
   profiles:
-    active: prod
+    active:
+      on-profile: prod
 
   jpa:
     open-in-view: true
