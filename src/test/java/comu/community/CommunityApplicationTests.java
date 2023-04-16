@@ -6,7 +6,6 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.ActiveProfiles;
 
 //@SpringBootTest
-@PropertySource("classpath:/test.properties")
 class CommunityApplicationTests {
 
 	@Test
