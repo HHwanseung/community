@@ -2,6 +2,8 @@ plugins {
 	id 'org.springframework.boot' version '2.7.5'
 	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
 	id 'java'
+	// api-spec 플러그인 추가
+	id 'com.epages.restdocs-api-spec' version '0.16.0'
 }
 
 group = 'comu.community'
@@ -20,6 +22,8 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.boot:spring-boot-devtools'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	compileOnly 'org.projectlombok:lombok'
@@ -48,10 +52,24 @@ dependencies {
 	// redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+	implementation group: 'com.github.zhanhb', name: 'thymeleaf-layout-dialect', version: '3.2.0'
+
+	// api-spec 의존성 추가
+	testImplementation 'com.epages:restdocs-api-spec-mockmvc:0.16.0'
+
+}
 
 
+// build 후 생성된 openAPI문서를 src/main/resource 하위로 복사하기 위한 task를 추가한다.
+task copyOpenApi(type: Copy) {
+	from file("build/api-spec")
+	into file("src/main/resources/static/docs")
+}
 
-
+// build 후 생성된 openAPI문서를 복사하는 task를 수행한다.
+build {
+	dependsOn 'copyDocument'
+	finalizedBy 'copyOpenApi'
 }
 
 tasks.named('test') {
