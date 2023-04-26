@@ -1,33 +1,9 @@
 version: '3.8'
 services:
-  mysqldb:
-    image: mysql
-    restart: always
+  tenwonmoa-swagger:
+    image: swaggerapi/swagger-ui
+    container_name: tenwonmoa-swagger
+    ports:
+      - 8082:8080
     environment:
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-    ports:
-      - "3306:3306"
-    env_file:
-      - .env
-
-  redis:
-    image: redis
-    ports:
-      - "6379:6379"
-
-  backend:
-    build: .
-    restart: always
-    environment:
-      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
-      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
-      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
-    ports:
-      - "8080:8080"
-    env_file:
-      - .env
-
-    depends_on:
-      - mysqldb
-      - redis
+      API_URL: "{URL}:8080/docs/openapi3.yaml"
