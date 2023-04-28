@@ -2,7 +2,6 @@ package comu.community.controller.message;
 
 import comu.community.dto.message.MessageCreateRequestDto;
 import comu.community.entity.member.Member;
-import comu.community.exception.MemberNotEqualsException;
 import comu.community.exception.MemberNotFoundException;
 import comu.community.repository.member.MemberRepository;
 import comu.community.response.Response;
