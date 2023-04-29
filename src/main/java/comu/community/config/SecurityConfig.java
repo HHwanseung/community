@@ -39,6 +39,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http.formLogin().loginPage("/customLogin").loginProcessingUrl("/login"); //인가/인증에 문제시 로그인 화면
         http.csrf().disable();
         http.cors().configurationSource(request -> {
             var cors = new CorsConfiguration();
@@ -63,112 +64,65 @@ public class SecurityConfig {
                 // 로그인, 회원가입 API 는 토큰이 없는 상태에서 요청이 들어오기 때문에 permitAll 설정
                 .and()
                 .authorizeRequests()
-//                .antMatchers("/swagger-ui/**", "/v3/**", "/test").permitAll() // swagger
                 .antMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**").permitAll() // swagger
-                .antMatchers(HttpMethod.GET, "/image/**").permitAll()
-
                 .antMatchers("/api/sign-up", "/api/sign-in", "/api/reissue").permitAll()
 
-//                .antMatchers(HttpMethod.GET, "/api/users").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-//                .antMatchers(HttpMethod.GET, "/api/users/favorites")
-//                .access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-//                .antMatchers(HttpMethod.GET, "/api/users/{id}").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-//                .antMatchers(HttpMethod.PUT, "/api/users").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-//                .antMatchers(HttpMethod.DELETE, "/api/users").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-//
-//                .antMatchers(HttpMethod.POST, "/api/messages").authenticated()
-//                .antMatchers(HttpMethod.GET, "/api/messages/sender")
-//                .access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-//                .antMatchers(HttpMethod.GET, "/api/messages/sender/{id}")
-//                .access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-//                .antMatchers(HttpMethod.GET, "/api/messages/receiver")
-//                .access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-//                .antMatchers(HttpMethod.GET, "/api/messages/receiver/{id}")
-//                .access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-//                .antMatchers(HttpMethod.DELETE, "/api/messages/sender/{id}")
-//                .access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-//                .antMatchers(HttpMethod.DELETE, "/api/messages/receiver/{id}")
-//                .access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-//
-//                .antMatchers(HttpMethod.POST, "/api/boards").authenticated()
-//                .antMatchers(HttpMethod.GET, "/api/boards/**")
-//                .access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-//                .antMatchers(HttpMethod.GET, "/api/boards/best").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-//                .antMatchers(HttpMethod.GET, "/api/boards/{id}").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-//                .antMatchers(HttpMethod.POST, "/api/boards/{id}")
-//                .access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-//                .antMatchers(HttpMethod.POST, "/api/boards/{id}/favorites")
-//                .access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-//                .antMatchers(HttpMethod.PUT, "/api/boards/{id}").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-//                .antMatchers(HttpMethod.DELETE, "/api/boards/{id}")
-//                .access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-//
-//                .antMatchers(HttpMethod.GET, "/api/comments").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-//                .antMatchers(HttpMethod.POST, "/api/comments").authenticated()
-//                .antMatchers(HttpMethod.DELETE, "/api/comments/{id}")
-//                .access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-//
-//                .antMatchers(HttpMethod.POST, "/api/reports/users").authenticated()
-//                .antMatchers(HttpMethod.POST, "/api/reports/boards").authenticated()
-//
-//                .antMatchers(HttpMethod.GET, "/api/admin/manages/users").access("hasRole('ROLE_ADMIN')")
-//                .antMatchers(HttpMethod.POST, "/api/admin/manages/users/{id}").access("hasRole('ROLE_ADMIN')")
-//                .antMatchers(HttpMethod.GET, "/api/admin/manages/boards").access("hasRole('ROLE_ADMIN')")
-//                .antMatchers(HttpMethod.POST, "/api/admin/manages/boards/{id}").access("hasRole('ROLE_ADMIN')")
-//
-//                .antMatchers(HttpMethod.GET, "/api/categories").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-//                .antMatchers(HttpMethod.POST, "/api/categories").access("hasRole('ROLE_ADMIN')")
-//                .antMatchers(HttpMethod.POST, "/api/categories/start").access("hasRole('ROLE_ADMIN')")
-//                .antMatchers(HttpMethod.DELETE, "/api/categories/{id}").access("hasRole('ROLE_ADMIN')")
-//
-//                .anyRequest().hasAnyRole("ROLE_ADMIN")
-
                 .antMatchers(HttpMethod.GET, "/api/users").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-                .antMatchers(HttpMethod.GET, "/api/users/favorites").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+                .antMatchers(HttpMethod.GET, "/api/users/favorites")
+                .access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
                 .antMatchers(HttpMethod.GET, "/api/users/{id}").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
                 .antMatchers(HttpMethod.PUT, "/api/users").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
                 .antMatchers(HttpMethod.DELETE, "/api/users").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
 
                 .antMatchers(HttpMethod.POST, "/api/messages").authenticated()
-                .antMatchers(HttpMethod.GET, "/api/messages/sender").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-                .antMatchers(HttpMethod.GET, "/api/messages/sender/{id}").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-                .antMatchers(HttpMethod.GET, "/api/messages/receiver").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-                .antMatchers(HttpMethod.GET, "/api/messages/receiver/{id}").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-                .antMatchers(HttpMethod.DELETE, "/api/messages/sender/{id}").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-                .antMatchers(HttpMethod.DELETE, "/api/messages/receiver/{id}").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+                .antMatchers(HttpMethod.GET, "/api/messages/sender")
+                .access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+                .antMatchers(HttpMethod.GET, "/api/messages/sender/{id}")
+                .access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+                .antMatchers(HttpMethod.GET, "/api/messages/receiver")
+                .access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+                .antMatchers(HttpMethod.GET, "/api/messages/receiver/{id}")
+                .access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+                .antMatchers(HttpMethod.DELETE, "/api/messages/sender/{id}")
+                .access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+                .antMatchers(HttpMethod.DELETE, "/api/messages/receiver/{id}")
+                .access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
 
                 .antMatchers(HttpMethod.POST, "/api/boards").authenticated()
-                .antMatchers(HttpMethod.GET, "/api/boards/**").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+                .antMatchers(HttpMethod.GET, "/api/boards/**")
+                .access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
                 .antMatchers(HttpMethod.GET, "/api/boards/best").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
                 .antMatchers(HttpMethod.GET, "/api/boards/{id}").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-                .antMatchers(HttpMethod.POST, "/api/boards/{id}").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-                .antMatchers(HttpMethod.POST, "/api/boards/{id}/favorites").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+                .antMatchers(HttpMethod.POST, "/api/boards/{id}")
+                .access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+                .antMatchers(HttpMethod.POST, "/api/boards/{id}/favorites")
+                .access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
                 .antMatchers(HttpMethod.PUT, "/api/boards/{id}").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-                .antMatchers(HttpMethod.DELETE, "/api/boards/{id}").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+                .antMatchers(HttpMethod.DELETE, "/api/boards/{id}")
+                .access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
 
                 .antMatchers(HttpMethod.GET, "/api/comments").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
                 .antMatchers(HttpMethod.POST, "/api/comments").authenticated()
-                .antMatchers(HttpMethod.DELETE, "/api/comments/{id}").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+                .antMatchers(HttpMethod.DELETE, "/api/comments/{id}")
+                .access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
 
                 .antMatchers(HttpMethod.POST, "/api/reports/users").authenticated()
                 .antMatchers(HttpMethod.POST, "/api/reports/boards").authenticated()
 
-                .antMatchers(HttpMethod.GET, "/api/admin/manages/users").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-                .antMatchers(HttpMethod.POST, "/api/admin/manages/users/{id}").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-                .antMatchers(HttpMethod.GET, "/api/admin/manages/boards").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-                .antMatchers(HttpMethod.POST, "/api/admin/manages/boards/{id}").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+                .antMatchers(HttpMethod.GET, "/api/admin/manages/users").access("hasRole('ROLE_ADMIN')")
+                .antMatchers(HttpMethod.POST, "/api/admin/manages/users/{id}").access("hasRole('ROLE_ADMIN')")
+                .antMatchers(HttpMethod.GET, "/api/admin/manages/boards").access("hasRole('ROLE_ADMIN')")
+                .antMatchers(HttpMethod.POST, "/api/admin/manages/boards/{id}").access("hasRole('ROLE_ADMIN')")
 
                 .antMatchers(HttpMethod.GET, "/api/categories").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-                .antMatchers(HttpMethod.POST, "/api/categories").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-                .antMatchers(HttpMethod.POST, "/api/categories/start").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-                .antMatchers(HttpMethod.DELETE, "/api/categories/{id}").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+                .antMatchers(HttpMethod.POST, "/api/categories").access("hasRole('ROLE_ADMIN')")
+                .antMatchers(HttpMethod.POST, "/api/categories/start").access("hasRole('ROLE_ADMIN')")
+                .antMatchers(HttpMethod.DELETE, "/api/categories/{id}").access("hasRole('ROLE_ADMIN')")
 
                 .antMatchers(HttpMethod.GET, "/api/points").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
                 .antMatchers(HttpMethod.PUT, "/api/points/{username}").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-
+//
                 .anyRequest().hasAnyRole("ROLE_ADMIN")
-
-
 
                 // JwtFilter 를 addFilterBefore 로 등록했던 JwtSecurityConfig 클래스를 적용
                 .and()
