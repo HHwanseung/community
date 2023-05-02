@@ -54,22 +54,45 @@ dependencies {
 
 	implementation group: 'com.github.zhanhb', name: 'thymeleaf-layout-dialect', version: '3.2.0'
 
-	// api-spec 의존성 추가
-	testImplementation 'com.epages:restdocs-api-spec-mockmvc:0.16.0'
-
 }
 
+def webappDir = "$projectDir/src/main/frontend"
 
-// build 후 생성된 openAPI문서를 src/main/resource 하위로 복사하기 위한 task를 추가한다.
-task copyOpenApi(type: Copy) {
-	from file("build/api-spec")
-	into file("src/main/resources/static/docs")
+sourceSets {
+	main {
+		resources {
+			srcDirs = ["$webappDir/build", "$projectDir/src/main/resources"]
+		}
+	}
 }
 
-// build 후 생성된 openAPI문서를 복사하는 task를 수행한다.
-build {
-	dependsOn 'copyDocument'
-	finalizedBy 'copyOpenApi'
+processResources {
+	dependsOn "buildReact"
+}
+
+task buildReact(type: Exec) {
+	dependsOn "installReact"
+	workingDir "$webappDir"
+	inputs.dir "$webappDir"
+	group = BasePlugin.BUILD_GROUP
+	if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
+		commandLine "npm.cmd", "run-script", "build"
+	} else {
+		commandLine "npm", "run-script", "build"
+	}
+}
+
+task installReact(type: Exec) {
+	workingDir "$webappDir"
+	inputs.dir "$webappDir"
+	group = BasePlugin.BUILD_GROUP
+	if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
+		commandLine "npm.cmd", "audit", "fix"
+		commandLine 'npm.cmd', 'install'
+	} else {
+		commandLine "npm", "audit", "fix"
+		commandLine 'npm', 'install'
+	}
 }
 
 tasks.named('test') {

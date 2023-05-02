@@ -36,3 +36,16 @@ out/
 
 ### VS Code ###
 .vscode/
+
+
+.DS_Store
+.env
+gradle/.DS_Store
+src/.DS_Store
+src/main/frontend/
+src/main/resources/aws.properties
+src/main/resources/secure.properties
+src/main/resources/static/
+src/main/resources/templates/
+src/test/resources/
+
