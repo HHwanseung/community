@@ -30,6 +30,7 @@
 * 댓글/대댓글 CRD 기능과 댓글 좋아요 기능
 * 카테고리를 기능, 카테고리별 검색 기능
 * 메세지 CRUD기능
+* Redis를 이용한 포인트 기능
 </br>
 
 ## ERD 설계
@@ -70,8 +71,9 @@
         List<Image> images = req.getImages().stream().map(i -> new Image(i.getOriginalFilename())).collect(toList());
         Category category = categoryRepository.findById(categoryId).orElseThrow(CategoryNotFoundException::new);
         Board board = boardRepository.save(new Board(req.getTitle(), req.getContent(), user, category, images));
- 
 ~~~
+  
+  
 
 </div>
 </details>
@@ -95,7 +97,7 @@
         Member member = getPrincipal();
         return Response.success(boardService.createBoard(req, categoryId, member));
     }
-  private Member getPrincipal() {
+    private Member getPrincipal() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Member member = memberRepository.findByUsername(authentication.getName())
                 .orElseThrow(MemberNotFoundException::new);
