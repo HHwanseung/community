@@ -35,7 +35,7 @@
 </br>
 
 ## ERD 설계
-![ERD_real](https://user-images.githubusercontent.com/78191801/236973525-141a3254-9361-48ad-80d9-f8b93f6e3f98.png)
+![ERD_real](https://user-images.githubusercontent.com/78191801/236974012-ada52da7-0c2a-4000-9c0d-34d663fe388b.png)
 
 
 </br>
