@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Entity
-public class BoardReportHistory extends BaseTimeEntity {
+public class BoardReport extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +25,7 @@ public class BoardReportHistory extends BaseTimeEntity {
     @Column(nullable = false)
     private String content;
 
-    public BoardReportHistory(Long reporterId, Long reportedBoardId, String content) {
+    public BoardReport(Long reporterId, Long reportedBoardId, String content) {
         this.reporterId = reporterId;
         this.reportedBoardId = reportedBoardId;
         this.content = content;

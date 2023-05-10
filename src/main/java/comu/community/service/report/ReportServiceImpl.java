@@ -6,8 +6,8 @@ import comu.community.dto.report.MemberReportRequestDto;
 import comu.community.dto.report.MemberReportResponseDto;
 import comu.community.dto.member.MemberEditRequestDto;
 import comu.community.entity.board.Board;
-import comu.community.entity.report.BoardReportHistory;
-import comu.community.entity.report.MemberReportHistory;
+import comu.community.entity.report.BoardReport;
+import comu.community.entity.report.MemberReport;
 import comu.community.entity.member.Member;
 import comu.community.exception.AlreadyReportException;
 import comu.community.exception.BoardNotFoundException;
@@ -37,9 +37,9 @@ public class ReportServiceImpl implements ReportService{
     public MemberReportResponseDto reportUser(Member reporter, MemberReportRequestDto req) {
         validateUserReportRequest(reporter, req);
         Member reportedMember = memberRepository.findById(req.getReportedUserId()).orElseThrow(MemberNotFoundException::new);
-        MemberReportHistory memberReportHistory = createUserReportHistory(reporter, reportedMember, req);
+        MemberReport memberReport = createUserReportHistory(reporter, reportedMember, req);
         checkUserStatusIsBeingReported(reportedMember, req);
-        return new MemberReportResponseDto(memberReportHistory.getId(), MemberEditRequestDto.toDto(reportedMember),
+        return new MemberReportResponseDto(memberReport.getId(), MemberEditRequestDto.toDto(reportedMember),
                 req.getContent());
     }
 
@@ -49,10 +49,10 @@ public class ReportServiceImpl implements ReportService{
         }
     }
 
-    private MemberReportHistory createUserReportHistory(Member reporter, Member reportedMember, MemberReportRequestDto req) {
-        MemberReportHistory memberReportHistory = new MemberReportHistory(reporter.getId(), reportedMember.getId(), req.getContent());
-        userReportHistoryRepository.save(memberReportHistory);
-        return memberReportHistory;
+    private MemberReport createUserReportHistory(Member reporter, Member reportedMember, MemberReportRequestDto req) {
+        MemberReport memberReport = new MemberReport(reporter.getId(), reportedMember.getId(), req.getContent());
+        userReportHistoryRepository.save(memberReport);
+        return memberReport;
     }
 
     private void validateUserReportRequest(Member reporter, MemberReportRequestDto req) {
@@ -70,9 +70,9 @@ public class ReportServiceImpl implements ReportService{
     public BoardReportResponse reportBoard(Member reporter, BoardReportRequest req) {
         Board reportedBoard = boardRepository.findById(req.getReportedBoardId()).orElseThrow(BoardNotFoundException::new);
         validateBoard(reporter, reportedBoard, req);
-        BoardReportHistory boardReportHistory = createBoardReportHistory(reporter, reportedBoard, req);
+        BoardReport boardReport = createBoardReportHistory(reporter, reportedBoard, req);
         checkBoardStatusIsBeingReported(reportedBoard, req);
-        return new BoardReportResponse(boardReportHistory.getId(), req.getReportedBoardId(),
+        return new BoardReportResponse(boardReport.getId(), req.getReportedBoardId(),
                 req.getContent());
     }
 
@@ -83,10 +83,10 @@ public class ReportServiceImpl implements ReportService{
         }
     }
 
-    private BoardReportHistory createBoardReportHistory(Member reporter, Board reportedBoard, BoardReportRequest req) {
-        BoardReportHistory boardReportHistory = new BoardReportHistory(reporter.getId(), reportedBoard.getId(), req.getContent());
-        boardReportHistoryRepository.save(boardReportHistory);
-        return boardReportHistory;
+    private BoardReport createBoardReportHistory(Member reporter, Board reportedBoard, BoardReportRequest req) {
+        BoardReport boardReport = new BoardReport(reporter.getId(), reportedBoard.getId(), req.getContent());
+        boardReportHistoryRepository.save(boardReport);
+        return boardReport;
     }
 
     private void validateBoard(Member reporter, Board reportedBoard, BoardReportRequest req) {

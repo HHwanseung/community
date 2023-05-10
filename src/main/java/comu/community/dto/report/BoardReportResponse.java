@@ -1,6 +1,6 @@
 package comu.community.dto.report;
 
-import comu.community.entity.report.BoardReportHistory;
+import comu.community.entity.report.BoardReport;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,11 +14,11 @@ public class BoardReportResponse {
     private Long reportedBoardId;
     private String content;
 
-    public BoardReportResponse toDto(BoardReportHistory boardReportHistory) {
+    public BoardReportResponse toDto(BoardReport boardReport) {
         return new BoardReportResponse(
-                boardReportHistory.getId(),
-                boardReportHistory.getReportedBoardId(),
-                boardReportHistory.getContent()
+                boardReport.getId(),
+                boardReport.getReportedBoardId(),
+                boardReport.getContent()
         );
     }
 
