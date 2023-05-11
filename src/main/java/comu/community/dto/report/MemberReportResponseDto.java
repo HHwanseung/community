@@ -1,7 +1,7 @@
 package comu.community.dto.report;
 
 import comu.community.dto.member.MemberEditRequestDto;
-import comu.community.entity.report.MemberReportHistory;
+import comu.community.entity.report.MemberReport;
 import comu.community.entity.member.Member;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,11 +15,11 @@ public class MemberReportResponseDto {
     private MemberEditRequestDto reportedUser;
     private String content;
 
-    public MemberReportResponseDto toDto(MemberReportHistory memberReportHistory, Member reportedMember) {
+    public MemberReportResponseDto toDto(MemberReport memberReport, Member reportedMember) {
         return new MemberReportResponseDto(
-                memberReportHistory.getId(),
+                memberReport.getId(),
                 MemberEditRequestDto.toDto(reportedMember),
-                memberReportHistory.getContent()
+                memberReport.getContent()
         );
     }
 

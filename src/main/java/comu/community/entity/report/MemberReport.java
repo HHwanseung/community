@@ -8,12 +8,12 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-@Setter
 @Entity
-public class MemberReportHistory extends BaseTimeEntity {
+public class MemberReport extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "member_report_id")
     private Long id;
 
     @Column(nullable = false)
@@ -25,7 +25,7 @@ public class MemberReportHistory extends BaseTimeEntity {
     @Column(nullable = false)
     private String content;
 
-    public MemberReportHistory(Long reporterId, Long reportedUserId, String content) {
+    public MemberReport(Long reporterId, Long reportedUserId, String content) {
         this.reporterId = reporterId;
         this.reportedUserId = reportedUserId;
         this.content = content;
