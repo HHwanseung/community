@@ -23,7 +23,7 @@ public class CategoryController {
     @ApiOperation(value = "모든 카테고리 조회")
     @GetMapping("/categories")
     @ResponseStatus(HttpStatus.OK)
-    public Response findAll() {
+    public Response findAllCategories() {
         return Response.success(categoryService.findAllCategory());
     }
 

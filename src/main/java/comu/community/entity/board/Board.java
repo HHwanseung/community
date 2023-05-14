@@ -41,8 +41,8 @@ public class Board extends BaseTimeEntity {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false)
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @JoinColumn(name = "category_id")
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
     private Category category;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.PERSIST, orphanRemoval = true)
@@ -56,7 +56,6 @@ public class Board extends BaseTimeEntity {
 
     @Column(nullable = false)
     private boolean reported;
-
 
     public Board(String title, String content, Member member, Category category, List<Image> images) {
         this.title = title;

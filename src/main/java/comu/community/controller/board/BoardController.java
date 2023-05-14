@@ -36,7 +36,7 @@ public class BoardController {
     @PostMapping("/boards")
     @ResponseStatus(HttpStatus.CREATED)
     public Response createBoard(@Valid @ModelAttribute BoardCreateRequest req,
-                           @RequestParam(value = "category", defaultValue = "1") int categoryId) {
+                           @RequestParam(value = "category", required = false) int categoryId) {
         Member member = getPrincipal();
         return Response.success(boardService.createBoard(req, categoryId, member));
     }
@@ -112,6 +112,5 @@ public class BoardController {
         Member member = memberRepository.findByUsername(authentication.getName())
                 .orElseThrow(MemberNotFoundException::new);
         return member;
-
     }
 }

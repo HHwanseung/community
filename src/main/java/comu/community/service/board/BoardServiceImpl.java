@@ -48,16 +48,22 @@ public class BoardServiceImpl implements BoardService {
     private final FavoriteRepository favoriteRepository;
     private final CategoryRepository categoryRepository;
 
-
     @Override
     public BoardCreateResponse createBoard(BoardCreateRequest req, int categoryId, Member member) {
         List<Image> images = req.getImages().stream().
                 map(i -> new Image(i.getOriginalFilename()))
                 .collect(toList());
-        Category category = categoryRepository.findById(categoryId).orElseThrow(CategoryNotFoundException::new);
+        Category category = getCategory(categoryId);
         Board board = boardRepository.save(new Board(req.getTitle(), req.getContent(), member, category, images));
         uploadImages(board.getImages(), req.getImages());
         return new BoardCreateResponse(board.getId(), board.getTitle(), board.getContent());
+    }
+
+    private Category getCategory(Integer categoryId){
+        if (categoryId == null) {
+            return null;
+        }
+        return categoryRepository.findById(categoryId).orElseThrow(CategoryNotFoundException::new);
     }
 
     @Override

@@ -1,6 +1,5 @@
 package comu.community.entity.category;
 
-import comu.community.entity.BaseTimeEntity;
 import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
