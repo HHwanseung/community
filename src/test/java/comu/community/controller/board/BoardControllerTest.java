@@ -34,7 +34,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static comu.community.factory.UserFactory.createUserWithAdminRole;
+import static comu.community.factory.MemberFactory.createUserWithAdminRole;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;

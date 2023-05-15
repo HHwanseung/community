@@ -24,7 +24,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.Collections;
 import java.util.Optional;
 
-import static comu.community.factory.UserFactory.createUserWithAdminRole;
+import static comu.community.factory.MemberFactory.createUserWithAdminRole;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
