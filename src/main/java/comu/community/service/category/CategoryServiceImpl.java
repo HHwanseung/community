@@ -8,7 +8,6 @@ import comu.community.repository.category.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 import java.util.Optional;
@@ -39,6 +38,10 @@ public class CategoryServiceImpl implements CategoryService {
                 .map(id -> categoryRepository.findById(id).orElseThrow(CategoryNotFoundException::new))
                 .orElse(null);
         categoryRepository.save(new Category(req.getName(), parent));
+//        Category parent = categoryRepository.findById(req.getParentId())
+//                .orElseThrow(CategoryNotFoundException::new);
+//
+//        categoryRepository.save(new Category(req.getName(), parent));
     }
 
     @Override
