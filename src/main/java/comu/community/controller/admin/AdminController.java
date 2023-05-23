@@ -18,14 +18,14 @@ public class AdminController {
 
     @ApiOperation(value = "정지 유저 관리")
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/admin/manages/users")
+    @GetMapping("/admin/manages/members")
     public Response manageReportedUser() {
         return Response.success(adminService.findReportedUsers());
     }
 
     @ApiOperation(value = "신고된 유저 정지 해제")
     @ResponseStatus(HttpStatus.OK)
-    @PostMapping("/admin/manages/users/{id}")
+    @PostMapping("/admin/manages/members/{id}")
     public Response unlockUser(@PathVariable Long id) {
         return Response.success(adminService.processUnlockUser(id));
     }

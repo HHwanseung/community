@@ -26,21 +26,21 @@ public class MemberController {
 
     @ApiOperation(value = "전체 회원 조회", notes = "전체 회원을 조회")
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/users")
+    @GetMapping("/members")
     public Response findAllMembers() {
         return Response.success(memberService.findAllMembers());
     }
 
     @ApiOperation(value = "개인 회원 조회", notes = "개인 회원을 조회")
     @ResponseStatus(HttpStatus.OK)
-    @GetMapping("/users/{id}")
+    @GetMapping("/members/{id}")
     public Response findMember(@ApiParam(value = "User ID", readOnly = true) @PathVariable Long id) {
         return Response.success(memberService.findMember(id));
     }
 
     @ApiOperation(value = "회원 정보 수정", notes = "회원의 정보를 수정")
     @ResponseStatus(HttpStatus.OK)
-    @PutMapping ("/users")
+    @PutMapping ("/members")
     public Response updateMemberInfo(@RequestBody MemberEditRequestDto memberEditRequestDto) {
         Member member =  getPrincipal();
         return Response.success(memberService.updateMemberInfo(member, memberEditRequestDto));
@@ -48,7 +48,7 @@ public class MemberController {
 
     @ApiOperation(value = "회원 탈퇴", notes = "회원을 탈퇴 시킴")
     @ResponseStatus(HttpStatus.OK)
-    @DeleteMapping("/users")
+    @DeleteMapping("/members")
     public Response deleteMemberInfo() {
         Member member = getPrincipal();
         memberService.deleteMemberInfo(member);
