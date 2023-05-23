@@ -1,4 +1,4 @@
-package comu.community.config;
+package comu.community.config.security;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;

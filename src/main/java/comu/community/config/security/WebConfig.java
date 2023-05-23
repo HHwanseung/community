@@ -1,4 +1,4 @@
-package comu.community.config;
+package comu.community.config.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

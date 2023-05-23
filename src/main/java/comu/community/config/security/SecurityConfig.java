@@ -1,4 +1,4 @@
-package comu.community.config;
+package comu.community.config.security;
 
 import comu.community.config.jwt.JwtAccessDeniedHandler;
 import comu.community.config.jwt.JwtAuthenticationEntryPoint;
@@ -108,15 +108,23 @@ public class SecurityConfig {
                 .antMatchers(HttpMethod.POST, "/api/reports/users").authenticated()
                 .antMatchers(HttpMethod.POST, "/api/reports/boards").authenticated()
 
-                .antMatchers(HttpMethod.GET, "/api/admin/manages/users").access("hasRole('ROLE_ADMIN')")
-                .antMatchers(HttpMethod.POST, "/api/admin/manages/users/{id}").access("hasRole('ROLE_ADMIN')")
-                .antMatchers(HttpMethod.GET, "/api/admin/manages/boards").access("hasRole('ROLE_ADMIN')")
-                .antMatchers(HttpMethod.POST, "/api/admin/manages/boards/{id}").access("hasRole('ROLE_ADMIN')")
+                .antMatchers(HttpMethod.GET, "/api/admin/manages/users").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+                .antMatchers(HttpMethod.POST, "/api/admin/manages/users/{id}").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+                .antMatchers(HttpMethod.GET, "/api/admin/manages/boards").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+                .antMatchers(HttpMethod.POST, "/api/admin/manages/boards/{id}").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+
+//                .antMatchers(HttpMethod.GET, "/api/admin/manages/users").access("hasRole('ROLE_ADMIN')")
+//                .antMatchers(HttpMethod.POST, "/api/admin/manages/users/{id}").access("hasRole('ROLE_ADMIN')")
+//                .antMatchers(HttpMethod.GET, "/api/admin/manages/boards").access("hasRole('ROLE_ADMIN')")
+//                .antMatchers(HttpMethod.POST, "/api/admin/manages/boards/{id}").access("hasRole('ROLE_ADMIN')")
 
                 .antMatchers(HttpMethod.GET, "/api/categories").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-                .antMatchers(HttpMethod.POST, "/api/categories").access("hasRole('ROLE_ADMIN')")
-                .antMatchers(HttpMethod.POST, "/api/categories/start").access("hasRole('ROLE_ADMIN')")
-                .antMatchers(HttpMethod.DELETE, "/api/categories/{id}").access("hasRole('ROLE_ADMIN')")
+                .antMatchers(HttpMethod.POST, "/api/categories").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+                .antMatchers(HttpMethod.POST, "/api/categories/start").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+                .antMatchers(HttpMethod.DELETE, "/api/categories/{id}").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+//                .antMatchers(HttpMethod.POST, "/api/categories").access("hasRole('ROLE_ADMIN')")
+//                .antMatchers(HttpMethod.POST, "/api/categories/start").access("hasRole('ROLE_ADMIN')")
+//                .antMatchers(HttpMethod.DELETE, "/api/categories/{id}").access("hasRole('ROLE_ADMIN')")
 
                 .antMatchers(HttpMethod.GET, "/api/points").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
                 .antMatchers(HttpMethod.PUT, "/api/points/{username}").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")

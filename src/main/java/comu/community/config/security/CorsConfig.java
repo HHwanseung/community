@@ -1,4 +1,4 @@
-package comu.community.config;
+package comu.community.config.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
