@@ -6,37 +6,150 @@
 📋 2022년 11월 8일 ~ 현재까지 업데이트 중
 - 개인 프로젝트
 
-## 사용 기술
+## 개발 필수요건
 
-  - Java 
-  - Spring Boot
-  - JPA
-  - JPQL
-  - MySQL
-  - Spring Security
-  - JWT
-  - Junit5
-  - Swagger
-  - Docker, Docker-compose
-  - Redis
-  - ~AWS EC2~
+### 게시물
+- 게시물을 등록/수정/삭제 가능
+- 카테고리를 활용 가능
+
+### 사용자별 게시물
+- 댓글/대댓글 활용 가능
+- 첨부파일을 등록/수정/삭제 가능
+- 좋아요, 즐겨찾기 활용 가능
+
+### 사용자
+- 사용자 자신의 정보 관리가능
+
+### 메세지
+- 메세지 등록/수정/삭제 가능
+- 받은 메세지, 보낸 메세지 관리 가능
+
+### 신고
+- 사용자, 게시물을 신고 가능
+
+### 관리자
+- 신고된 사용자, 게시물을 관리 가능
+- 카테고리 관리 가능
+
+### 개발 추가요건
+- 인증/인가
+- 예외처리
+
+## Tech Stacks
+
+- ### Spring Boot Framework
+
+- ### MySQL
+
+- ### Swagger Open API 3.0
+
 </br>
 
-## 주요기능
-* Spring Security, JWT 로그인을 이용한 유저인증
-* 게시물 CRUD, 게시물 좋아요/즐겨찾기 기능, 검색 기능, 첨부파일 CRUD
-* 유저 CRUD 기능, 유저 전체조회/개인조회 기능
-* 유저, 게시물에 신고기능
-* Admin 계정은 지속적인 신고를 받은 유저, 게시물을 관리가능
-* 댓글/대댓글 CRD 기능과 댓글 좋아요 기능
-* 카테고리를 기능, 카테고리별 검색 기능
-* 메세지 CRUD기능
-* Redis를 이용한 포인트 기능
-</br>
+# Project Sturucture
+
+```bash
+community
+├── advice // 예외처리
+├── config // 
+│   ├── auth
+│   ├── constant
+│   ├── jwt
+│   ├── redis
+│   └──  security
+├── controller // 
+├── dto // 
+├── entity //
+├── exceptions // 커스텀 예외 및 에러 클래스
+│   └── type
+├── repository // 
+├── response // 
+└── service
+```
+
+### Components
+
+- advice
+  - 인증/인가와 관련된 컴포넌트
+  - `ex) jwt, google, github, ...etc`
+- config
+  - 전역으로 공통적으로 사용될 파일들로 구성
+  - `ex) Dto, Decorator, enum, interface, utils`
+- controller
+  - database, orm 설정 등 추가적으로 특정 패키지의 설정이 들어갈 때 해당 디렉토리에서 모듈화하도록 구성
+- dto
+  - 커스텀하게 특정 예외나 에러를 처리하기 위한 클래스들이 위치할 디렉토리
+  - `ex) HttpExceptionFilter`
+- entity
+  - AOP를 위한 특정 역할을 위한 커스텀한 Interceptor 클래스들이 위치할 디렉토리
+  - `ex) Logging Interceptor, Transform Interceptor`
+- exceptions
+  - 주문 관련 도메인의 파일로 구성
+- repository
+  - 상품 관련 도메인의 파일로 구성
+- response
+  - 유저 관련 도메인의 파일로 구성
+- service
+  - 각종 유효성 검사를 위한 파일로 구성
+  - `ex) 환경변수 및 데이터베이스 설정 Validation`
+
 
 ## ERD 설계
 ![ERD_real](https://user-images.githubusercontent.com/78191801/236974012-ada52da7-0c2a-4000-9c0d-34d663fe388b.png)
 
+# API
+
+## Auth
+
+- 회원가입 `(POST /sign-up)`
+- 로그인 `(POST /sign-in)`
+- 토큰 재발급 `(POST /reissue)`
+
+## Board
+
+- 게시물 작성 `(POST /boards)`
+- 전체 게시물 조회 `(GET /boards/all/{categoryid})`
+- 단건 게시물 조회 `(GET /boards/{id})`
+- 게시물 수정 `(PUT /boards/{id})`
+- 게시물 삭제 `(DELETE /boards/{id})`
+- 게시물 검색 `(GET /boards/search?page={})`
+- 게시물 좋아요/취소 `(POST /boards/{id})`
+- 게시물 즐겨찾기/취소 `(POST /boards/{id}/favorites)`
+- 추천글 조회 `(GET /boards/best)`
+
+## Member
+
+- 전체 회원 조회 `(GET /members)`
+- 개인 회원 조회 `(GET /members/{id})`
+- 회원 정보 수정 `(PUT /members)`
+- 전체 회원 삭제 `(DELETE /members)`
+
+## Comment
+- 댓글 작성 `(POST /comments)`
+- 댓글 조회 `(GET /comments)`
+- 댓글 삭제 `(DELETE /comments/{id})`
+
+## Message
+- 메세지 작성 `(POST /messages)`
+- 받은 메세지 전부 확인 `(GET /messages/receiver)`
+- 받은 메세지 단건 확인 `(GET /messages/receiver/{id})`
+- 보낸 메세지 전부 확인 `(GET /messages/sender)`
+- 보낸 메세지 단건 확인 `(GET /messages/sender/{id})`
+- 받은 메세지 삭제 `(DELETE /messages/receiver/{id})`
+- 보낸 메세지 삭제 `(DELETE /messages/sender/{id})`
+
+## Category
+- 카테고리 생성 `(POST /categoryies)`
+- 카테고리 조회 `(GET /categoryies)`
+- 카테고리 삭제 `(DELETE /categoryies/{id})`
+
+## Report
+- 유저 신고 `(POST /reports/users)`
+- 게시물 신고 `(POST /reports/boards)`
+
+## Admin
+- 정지 유저 관리 `(GET /admin/manages/members)
+- 신고된 유저 정지 해제 `(POST /admin/manages/members/{id})`
+- 
 
 </br>
 
