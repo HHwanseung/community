@@ -1,7 +1,6 @@
 package comu.community.service.admin;
 
 import comu.community.dto.board.BoardSimpleDto;
-import comu.community.dto.member.MemberEditRequestDto;
 import comu.community.dto.member.MemberSimpleNicknameResponseDto;
 import comu.community.entity.board.Board;
 import comu.community.entity.member.Member;
