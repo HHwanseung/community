@@ -49,20 +49,20 @@
 
 ```bash
 community
-├── advice // 예외처리
-├── config // 
+├── advice
+├── config
 │   ├── auth
 │   ├── constant
 │   ├── jwt
 │   ├── redis
 │   └──  security
-├── controller // 
-├── dto // 
-├── entity //
-├── exceptions // 커스텀 예외 및 에러 클래스
+├── controller
+├── dto
+├── entity
+├── exceptions
 │   └── type
-├── repository // 
-├── response // 
+├── repository
+├── response 
 └── service
 ```
 
@@ -147,9 +147,10 @@ community
 - 게시물 신고 `(POST /reports/boards)`
 
 ## Admin
-- 정지 유저 관리 `(GET /admin/manages/members)
+- 정지 유저 관리 `(GET /admin/manages/members)`
 - 신고된 유저 정지 해제 `(POST /admin/manages/members/{id})`
-- 
+- 게시물 관리 `(GET /admin/manages/boards)`
+- 신고된 게시물 관리 `(POST /admin/manages/boards/{id})`
 
 </br>
 
@@ -239,14 +240,6 @@ community
 </details>
 
 </br>
-
-## 그 외 트러블 슈팅
-<details>
-<summary>npm run dev 실행 오류</summary>
-<div markdown="1">
-
-- Webpack-dev-server 버전을 3.0.0으로 다운그레이드로 해결
-- `$ npm install —save-dev webpack-dev-server@3.0.0`
 
 </div>
 </details>
