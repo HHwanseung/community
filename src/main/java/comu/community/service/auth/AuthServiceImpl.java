@@ -44,14 +44,6 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void savePointEntity(Member member) {
-        Point point = new Point(member);
-        pointRepository.save(point);
-        redisTemplate.opsForZSet().add(RANKING_KEY, member.getUsername(), point.getPoint());
-    }
-
-
-    @Override
     public TokenResponseDto signIn(LoginRequestDto req) {
         Member member = memberRepository.findByUsername(req.getUsername()).orElseThrow(() -> {
             throw new LoginFailureException();
@@ -95,6 +87,13 @@ public class AuthServiceImpl implements AuthService {
         TokenResponseDto tokenResponseDto = new TokenResponseDto(tokenDto.getAccessToken(), tokenDto.getRefreshToken());
         return tokenResponseDto;
     }
+
+//    @Override
+//    public void savePointEntity(Member member) {
+//        Point point = new Point(member);
+//        pointRepository.save(point);
+//        redisTemplate.opsForZSet().add(RANKING_KEY, member.getUsername(), point.getPoint());
+//    }
 
     private Member createSignupFormOfUser(SignUpRequestDto req) {
         Member member = Member.builder()

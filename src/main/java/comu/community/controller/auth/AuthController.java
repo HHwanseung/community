@@ -29,7 +29,7 @@ public class AuthController {
     @PostMapping("/sign-up")
     public Response register(@Valid @RequestBody SignUpRequestDto signUpRequestDto) {
         Member member = authService.signup(signUpRequestDto);
-        authService.savePointEntity(member);
+//        authService.savePointEntity(member);
         return success();
     }
 

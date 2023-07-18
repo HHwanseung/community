@@ -9,7 +9,7 @@ import comu.community.entity.member.Member;
 public interface AuthService {
 
     Member signup(SignUpRequestDto req);
-    void savePointEntity(Member member);
+//    void savePointEntity(Member member);
     TokenResponseDto signIn(LoginRequestDto loginRequestDto);
     TokenResponseDto reissue(TokenRequestDto tokenRequestDto);
 
