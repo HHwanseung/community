@@ -65,29 +65,23 @@ community
 ### Components
 
 - advice
-  - 인증/인가와 관련된 컴포넌트
-  - `ex) jwt, google, github, ...etc`
+  
 - config
-  - 전역으로 공통적으로 사용될 파일들로 구성
-  - `ex) Dto, Decorator, enum, interface, utils`
+  
 - controller
-  - database, orm 설정 등 추가적으로 특정 패키지의 설정이 들어갈 때 해당 디렉토리에서 모듈화하도록 구성
+  
 - dto
-  - 커스텀하게 특정 예외나 에러를 처리하기 위한 클래스들이 위치할 디렉토리
-  - `ex) HttpExceptionFilter`
+  
 - entity
-  - AOP를 위한 특정 역할을 위한 커스텀한 Interceptor 클래스들이 위치할 디렉토리
-  - `ex) Logging Interceptor, Transform Interceptor`
+  
 - exceptions
-  - 주문 관련 도메인의 파일로 구성
+  
 - repository
-  - 상품 관련 도메인의 파일로 구성
+  
 - response
-  - 유저 관련 도메인의 파일로 구성
+  
 - service
-  - 각종 유효성 검사를 위한 파일로 구성
-  - `ex) 환경변수 및 데이터베이스 설정 Validation`
-
+  
 
 ## ERD 설계
 ![ERD_real](https://user-images.githubusercontent.com/78191801/236974012-ada52da7-0c2a-4000-9c0d-34d663fe388b.png)
